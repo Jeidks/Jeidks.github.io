@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#061a63">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>바다 위의 인어</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Jost:ital,wght@1,800&family=Lato:ital,wght@0,400;0,900;1,700;1,900&family=Noto+Sans+KR:wght@400;500&display=swap">
+<style>
+:root{--sky1:#f4fbff;--sky2:#bfe4fb;--sea:#1648b8;--sea-deep:#061a63;--foam:#ffffff;--ink:#10244f;--line:#c9d6ee;--bg:#ffffff;color-scheme: light}
+@media (prefers-color-scheme: dark){  :root:not([data-theme="light"]){ --sky1:#f4fbff; --sky2:#bfe4fb; --ink:#10244f; --bg:#ffffff; }}
+*{box-sizing:border-box;margin:0}
+html,body{background:#061a63;font-family:"Nanum Myeongjo","Noto Serif KR",serif}
+#track{height:340vh;position:relative}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:linear-gradient(var(--sky1),var(--sky2) 70%)}
+.sea{position:absolute;left:0;right:0;top:62vh;will-change:top}
+.mermaid{position:absolute;left:50%;bottom:calc(100% - 50px);width:min(56vw,250px);transform:translateX(-50%);animation:bob 5.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(-6px) rotate(-2.5deg)}50%{transform:translateX(-50%) translateY(18px) rotate(2.5deg)}}
+.mermaid svg{display:block;width:100%;height:auto;overflow:visible}
+.hair{transform-origin:62px 26px;animation:hairsway 6s ease-in-out infinite}
+@keyframes hairsway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(2deg)}}
+.fin{transform-origin:108px 228px;animation:flick 4.2s ease-in-out infinite}
+@keyframes flick{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(5deg)}}
+.wave{position:absolute;left:0;width:200%;height:940px;display:block;animation:drift 9s linear infinite,swell 3.6s ease-in-out infinite}
+.wave.back{top:-110px;animation-duration:17s,5.4s;animation-direction:reverse,normal}
+.wave.mid{top:-86px;animation-duration:12s,4s;animation-delay:0s,-1.6s}
+.wave.front{top:-62px;animation-duration:8s,2.7s;animation-delay:0s,-1s}
+@keyframes drift{to{transform:translateX(-50%)}}
+@keyframes swell{50%{translate:0 34px}}
+.hint{position:absolute;top:80px;left:0;right:0;text-align:center;color:#fff;font-size:15px;letter-spacing:.08em;z-index:5;font-family:"Sandoll Gothic Neo","SandollGothicNeo","산돌고딕 Neo","산돌고딕","Noto Sans KR",sans-serif;font-weight:400;animation:nudge 2.2s ease-in-out infinite}
+.hint span{display:block;font-size:22px;margin-top:6px}
+@keyframes nudge{50%{transform:translateY(8px)}}
+#deep{position:absolute;inset:0;background:var(--sea-deep);opacity:0;pointer-events:none}
+#lock{position:absolute;inset:0;background:var(--bg);opacity:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+#lock.on{pointer-events:auto}
+#lock label{color:var(--ink);font-size:15px;margin-bottom:18px;letter-spacing:.04em}
+#lock input{width:min(300px,80vw);border:1.5px solid var(--ink);border-radius:6px;background:#f6f9ff;font:inherit;font-size:20px;text-align:center;padding:16px 12px;color:var(--ink);outline:none;letter-spacing:.2em}
+#lock input:focus-visible{border-color:var(--sea);box-shadow:0 0 0 3px rgba(22,72,184,.18)}
+#msg{height:24px;margin-top:16px;font-size:14px;color:#a33}
+#msg.ok{color:var(--sea)}
+.star{transform-origin:0 0;animation:twinkle 2.4s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes twinkle{0%,100%{transform:scale(1);opacity:.88}50%{transform:scale(1.2);opacity:1}}
+#home{--w:min(90vw,400px);position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:#121214;color:#e8eaf1;visibility:hidden;transition:opacity .9s ease,visibility 0s linear .9s}
+#home.on{opacity:1;visibility:visible;transition:opacity .9s ease}
+#home header{display:flex;align-items:center;justify-content:space-between}
+#home .logo{flex:none;color:#e8eaf1}
+#home h1{font:600 20px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;color:#e8eaf1;border:2px solid #4d7cff;border-radius:999px;padding:8px 18px;white-space:nowrap}
+#home .menu{border:0;background:none;display:grid;align-content:center;cursor:pointer}
+#home .menu i{display:block;height:2px;background:#e8eaf1;border-radius:2px}
+#home main{position:relative;flex:1;overflow:hidden}
+#home .quote{left:0;right:0;top:calc(3vh + var(--w)*.45);text-align:center;font:italic 900 calc(var(--w)*.11)/1 "Lato","Noto Sans KR",sans-serif;white-space:nowrap}
+#home .go{left:50%;top:66%;font:italic 700 clamp(22px,7vw,30px)/1 "Lato","Noto Sans KR",sans-serif;color:#e8eaf1;background:linear-gradient(170deg,#020512 15%,#26336b 100%);border:0;border-radius:999px;white-space:nowrap;cursor:pointer;box-shadow:0 0 0 4px #121214,0 10px 26px rgba(0,0,0,.5)}
+#home .go:focus-visible,#tabs button:focus-visible,#home .menu:focus-visible{outline:2px solid #6f93ff;outline-offset:3px}
+#tabs{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid rgba(255,255,255,.16);background:#121214;padding-bottom:env(safe-area-inset-bottom,0px)}
+#tabs button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0 9px;border:0;background:none;color:#8a93ab;font:500 11px/1 "Noto Sans KR",sans-serif;cursor:pointer}
+#tabs button+button{border-left:1px solid rgba(255,255,255,.1)}
+#tabs svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#tabs svg.boat{stroke:none}
+#tabs button[aria-current]{color:#6f93ff}
+#home.on .quote,#home.on .go{animation:hfade 1s .8s both}
+@keyframes hrise{from{opacity:0;transform:translateY(26px) scale(.88)}}
+@keyframes hfade{from{opacity:0}}
+@keyframes hpulse{50%{transform:scale(1.12);opacity:.75}}
+@media (prefers-reduced-motion:reduce){  .mermaid,.wave,.hint,.hair,.fin,.star,#home.on .quote,#home.on .go{animation:none}}
+#home:not([data-view="home"]) main{display:none}
+#home .view{display:none;flex:1;overflow-y:auto;padding:22px 16px 28px;-webkit-overflow-scrolling:touch}
+#home[data-view="assets"] #v-assets,#home[data-view="insights"] #v-insights,#home[data-view="inventory"] #v-inventory,#home[data-view="reader"] #v-reader,#home[data-view="soon"] #v-soon{display:block}
+#home .view h2{font:600 24px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;color:#e8eaf1}
+#home .sub{margin:6px 0 18px;font-size:13px;color:#8a93ab}
+#home .view ul{list-style:none;padding:0;display:grid;gap:12px}
+#home .view li{background:#1b1b20;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;display:grid;gap:8px}
+#home .view li h3{font:600 16px/1.3 "Noto Sans KR",sans-serif;color:#e8eaf1}
+#home .view li p{font-size:13px;line-height:1.5;color:#8a93ab;white-space:pre-line}
+#home .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px}
+#home .price{font:italic 700 17px/1 "Lato",sans-serif;color:#9db8ff}
+#home .buy{font:italic 700 14px/1 "Lato","Noto Sans KR",sans-serif;color:#e8eaf1;background:linear-gradient(170deg,#020512 15%,#26336b 100%);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:11px 20px;cursor:pointer}
+#home .buy[disabled]{opacity:.55;cursor:default}
+#home .buy:focus-visible{outline:2px solid #6f93ff;outline-offset:3px}
+#home .empty{margin-top:30vh;text-align:center;font-size:14px;color:#8a93ab}
+#toast{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:#26336b;color:#e8eaf1;padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap}
+#toast.on{opacity:1}
+#home .date{font-size:12px;color:#8a93ab}
+#home .btns{display:flex;gap:8px}
+#home .read{font:500 13px/1 "Noto Sans KR",sans-serif;color:#e8eaf1;background:linear-gradient(170deg,#020512 15%,#26336b 100%);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:9px 16px;cursor:pointer}
+#home .back{background:none;border:0;color:#8a93ab;font:500 13px/1 "Noto Sans KR",sans-serif;padding:8px 0;cursor:pointer}
+#home .rd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+#home .how{display:inline-flex;align-items:center;font:italic 700 13px/1 "Lato","Noto Sans KR",sans-serif;color:#9db8ff;background:none;border:1px solid rgba(157,184,255,.4);border-radius:999px;padding:8px 14px;cursor:pointer}
+#home .how[hidden]{display:none}
+#home .how:focus-visible{outline:2px solid #6f93ff;outline-offset:3px}
+#home .how-h{font:600 13px/1 "Noto Sans KR",sans-serif;color:#9db8ff;margin:4px 0 0}
+#home .how-i{position:relative;margin:0;padding-left:14px;font-size:14px;line-height:1.55;color:#d6d9e2}
+#home .how-i::before{content:"·";position:absolute;left:2px}
+#home .read:focus-visible,#home .back:focus-visible{outline:2px solid #6f93ff;outline-offset:3px}
+#home #rd-body{margin-top:18px;font-size:15px;line-height:1.8;color:#d6d9e2;white-space:pre-wrap}
+#home #rd-body.none{color:#8a93ab;text-align:center;margin-top:30vh;font-size:14px}
+#home .tt-now{display:flex;align-items:baseline;gap:10px;margin:14px 0 16px;padding:16px;border-radius:16px;background:linear-gradient(170deg,#020512 15%,#26336b 100%);border:1px solid rgba(255,255,255,.14)}
+#home .tt-now .k{font:italic 700 13px/1 "Lato",sans-serif;color:#9db8ff}
+#home .tt-now strong{font:600 17px/1.3 "Noto Sans KR",sans-serif;color:#e8eaf1;flex:1}
+#home .tt-now .tm{font:italic 700 13px/1 "Lato",sans-serif;color:#9db8ff;white-space:nowrap}
+#home .tt-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px}
+#home .tt-days button{position:relative;display:grid;gap:5px;justify-items:center;padding:9px 0 13px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:none;color:#8a93ab;cursor:pointer}
+#home .tt-days .dn{font:500 11px/1 "Noto Sans KR",sans-serif}
+#home .tt-days .dd{font:italic 700 16px/1 "Lato",sans-serif;color:#e8eaf1}
+#home .tt-days .dot{position:absolute;bottom:5px;width:4px;height:4px;border-radius:50%;background:#6f93ff}
+#home .tt-days button.today .dd{color:#9db8ff}
+#home .tt-days button.on{background:#1648b8;border-color:#1648b8}
+#home .tt-days button.on .dn,#home .tt-days button.on .dd{color:#fff}
+#home .tt-days button.on .dot{background:#fff}
+#home .tt-grid{position:relative;margin:10px 0 100px;cursor:pointer}
+#home .tt-grid .hr{position:absolute;left:0;right:0;height:0;border-top:1px solid rgba(255,255,255,.08)}
+#home .tt-grid .hr span{position:absolute;left:0;top:-7px;width:36px;font:500 11px/1 "Lato",sans-serif;color:#6b7390;background:#121214}
+#home .tt-grid .lane{position:absolute;left:44px;right:0;top:0;bottom:0}
+#home .tt-grid .blk{position:absolute;box-sizing:border-box;padding:7px 10px;border-radius:12px;border:0;text-align:left;color:#fff;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;gap:3px;font:inherit}
+#home .tt-grid .blk b{font:600 13px/1.25 "Noto Sans KR",sans-serif}
+#home .tt-grid .blk i{font:italic 700 11px/1 "Lato",sans-serif;opacity:.8}
+#home .tt-grid .blk.sm{flex-direction:row;align-items:center;gap:8px;padding:0 10px}
+#home .tt-grid .blk.now{box-shadow:0 0 0 2px #fff}
+#home .tt-grid .nowline{position:absolute;left:36px;right:0;height:0;border-top:2px solid #ff5a5a;z-index:2;pointer-events:none}
+#home .tt-grid .nowline::before{content:"";position:absolute;left:-4px;top:-5px;width:8px;height:8px;border-radius:50%;background:#ff5a5a}
+#home .tt-add{position:absolute;right:18px;bottom:calc(84px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;border:0;background:linear-gradient(170deg,#1648b8,#0b2f8f);color:#fff;font-size:30px;line-height:1;box-shadow:0 8px 22px rgba(0,0,0,.5);cursor:pointer;z-index:4}
+#home .tt-sheet{position:absolute;inset:0;z-index:9;display:flex;align-items:flex-end;background:rgba(0,0,0,.6)}
+#home .tt-sheet[hidden]{display:none}
+#home .tt-panel{width:100%;background:#1b1b20;border-radius:22px 22px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom,0px));display:grid;gap:14px}
+#home .tt-panel h3{font:600 17px/1 "Noto Sans KR",sans-serif;color:#e8eaf1}
+#home .tt-panel input{min-width:0;width:100%;box-sizing:border-box;background:#121214;color:#e8eaf1;border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:13px;font:inherit;font-size:16px;color-scheme:dark}
+#home .tt-times{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#home .tt-times label{display:grid;gap:6px;font-size:12px;color:#8a93ab}
+#home .tt-actions{display:flex;gap:8px;justify-content:flex-end}
+#home .tt-actions .buy{margin-left:auto}
+#home .tt-actions #tt-del{color:#ff8a8a;border-color:#ff8a8a}
+#home .tt-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:12px 0 0;padding:4px;border-radius:999px;background:#1b1b20}
+#home .tt-tabs button{position:relative;border:0;border-radius:999px;padding:11px 0;background:none;color:#8a93ab;font:500 13px/1 "Noto Sans KR",sans-serif;cursor:pointer}
+#home .tt-tabs button.on{background:#26336b;color:#fff}
+#home .tt-tabs button.ping::after{content:"";position:absolute;top:8px;right:14px;width:7px;height:7px;border-radius:50%;background:#ff5a5a}
+#home #tt.bl-mode #tt-now,#home #tt.bl-mode #tt-days,#home #tt.bl-mode #tt-grid,#home #tt.bl-mode #tt-add{display:none}
+#home #tt:not(.bl-mode) #bl{display:none}
+#home .bl-hero{display:grid;gap:8px;margin:14px 0 16px;padding:18px;border-radius:16px;background:linear-gradient(170deg,#020512 15%,#26336b 100%);border:1px solid rgba(255,255,255,.14)}
+#home .bl-hero .k{font:500 12px/1 "Noto Sans KR",sans-serif;color:#9db8ff}
+#home .bl-hero strong{font:italic 700 26px/1.1 "Lato","Noto Sans KR",sans-serif;color:#e8eaf1}
+#home .bl-hero .tm{font:500 12px/1 "Noto Sans KR",sans-serif;color:#8a93ab}
+#home .bl-slots{display:grid;gap:12px}
+#home .st-status{display:flex;justify-content:space-between;align-items:center;margin:14px 0 16px;padding:14px 16px;border-radius:16px;background:linear-gradient(170deg,#020512 15%,#26336b 100%);border:1px solid rgba(255,255,255,.14);font:500 13px/1 "Noto Sans KR",sans-serif;color:#d6d9e2}
+#home .st-status b{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:#fff}
+#home .st-status b::before{content:"";width:8px;height:8px;border-radius:50%;background:#6b7390}
+#home .st-status.open b::before{background:#3ddc84}
+#home .st-idx{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#home .st-card{display:grid;gap:7px;padding:12px;border-radius:14px;background:#1b1b20;border:1px solid rgba(255,255,255,.08)}
+#home .st-card .n{font:500 11px/1 "Noto Sans KR",sans-serif;color:#8a93ab}
+#home .st-card .p{font:italic 700 16px/1 "Lato",sans-serif;color:#e8eaf1}
+#home .st-card .c{font:600 11px/1.2 "Lato",sans-serif}
+#home .up{color:#ff6b6b}
+#home .dn{color:#5aa0ff}
+#home .st-h{margin:22px 0 10px;font:600 13px/1 "Noto Sans KR",sans-serif;color:#9db8ff}
+#home .st-row{display:flex;align-items:center;gap:10px;padding:14px;margin-bottom:8px;border-radius:14px;background:#1b1b20;border:1px solid rgba(255,255,255,.08)}
+#home .st-row .s{flex:1;font:italic 700 16px/1 "Lato",sans-serif;color:#e8eaf1}
+#home .st-row .r{display:grid;gap:5px;text-align:right}
+#home .st-row .p{font:italic 700 16px/1 "Lato",sans-serif;color:#e8eaf1}
+#home .st-row .c{font:600 12px/1 "Lato","Noto Sans KR",sans-serif}
+#home .st-row .x{background:none;border:0;color:#8a93ab;font-size:20px;line-height:1;cursor:pointer;padding:4px 8px}
+#home .st-form{display:flex;gap:8px;margin-top:6px}
+#home .st-form input{flex:1;min-width:0;background:#1b1b20;color:#e8eaf1;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:12px 16px;font:inherit;font-size:16px;text-transform:uppercase;color-scheme:dark}
+#home .st-form .buy{padding:11px 20px}
+#home .st-note{margin:16px 0 0;font-size:12px;line-height:1.6;color:#6b7390}
+#home .st-row .x:focus-visible,#home .st-form input:focus-visible{outline:2px solid #6f93ff;outline-offset:2px}
+#home .bl-slot{display:flex;gap:12px;align-items:flex-start}
+#home .bl-slot .num{flex:none;width:30px;height:30px;margin-top:9px;border-radius:50%;background:#26336b;color:#fff;font:italic 700 15px/30px "Lato",sans-serif;text-align:center}
+#home .bl-slot textarea{flex:1;min-width:0;box-sizing:border-box;resize:none;background:#1b1b20;color:#e8eaf1;border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:13px;font:inherit;font-size:16px;line-height:1.5;color-scheme:dark}
+#home .bl-slot textarea:focus-visible{outline:2px solid #6f93ff;outline-offset:2px}
+#home .tt-tabs button:focus-visible{outline:2px solid #6f93ff;outline-offset:2px}
+#home .tt-days button:focus-visible,#home .tt-add:focus-visible,#home .tt-grid .blk:focus-visible,#home .tt-panel input:focus-visible{outline:2px solid #6f93ff;outline-offset:2px}
+#home .del{font:500 13px/1 "Noto Sans KR",sans-serif;color:#e8eaf1;background:none;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:9px 16px;cursor:pointer}
+#home .del.arm{color:#ff8a8a;border-color:#ff8a8a}
+#home .del:focus-visible{outline:2px solid #6f93ff;outline-offset:3px}
+#home main{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+#home .hero{position:relative;min-height:100%;display:grid;place-items:center;padding:24px;box-sizing:border-box}
+#home .wk{display:inline-block;background:#ed1c24;padding:.2em .42em .26em}
+#home .wk span{display:block;font:italic 800 clamp(40px,15vw,84px)/1 "Jost","Lato",sans-serif;letter-spacing:-.035em;color:#fff}
+#home .after{min-height:100%;display:grid;justify-items:center;padding:48px 16px;box-sizing:border-box}
+#home .quote{position:static;transform:none;pointer-events:auto}
+#home .go{position:static;transform:none}
+#home.on .wk{animation:hfade 1s .4s both}
+#home h1.wk{border:0;border-radius:0;padding:.2em .42em .26em;letter-spacing:0}
+#home .after{place-content:start center}
+#home .go{width:min(76vw,310px);padding:20px 18px;font-size:clamp(20px,6.2vw,26px)}
+#home header{background:#2a2a2f}
+#home .quote{color:#6b1118}
+#home .after{padding-top:9vh}
+#home .mm{width:min(40vw,170px);height:auto;margin-top:40px;color:#9aa1ad;overflow:visible;animation:mmbob 5s ease-in-out infinite}
+@keyframes mmbob{50%{transform:translateY(8px) rotate(1.5deg)}}
+@media (prefers-reduced-motion:reduce){  #home .mm{animation:none}}
+#home .mm-tile{width:min(60vw,240px);aspect-ratio:1/1;border-radius:22%;background:radial-gradient(circle at 50% 50%,#0c1930,#050a14 75%);border:1px solid rgba(216,193,141,.14);display:grid;place-items:center;animation:mmbob 5s ease-in-out infinite}
+#home .mm2{height:82%;width:auto;overflow:visible;filter:drop-shadow(0 0 5px rgba(80,140,235,.45))}
+#home .core{animation:corepulse 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes corepulse{50%{transform:scale(1.18);opacity:.75}}
+@media (prefers-reduced-motion:reduce){  #home .mm-tile,#home .core{animation:none}}
+#home .tag{margin:-22px 0 0;max-width:90vw;text-align:center;font:500 14px/1.5 "Noto Sans KR",sans-serif;letter-spacing:.02em;color:#fff}
+#home .verse{text-align:center}
+#home .verse p{margin:0;font:400 15px/1.7 "Lato","Noto Sans KR",sans-serif;color:#e8eaf1}
+#home .verse cite{display:block;font:italic 700 14px/1 "Lato",sans-serif;color:#7a1a1f}
+#home header{border-bottom:0;gap:8px}
+#home .logo{width:30px;height:30px}
+#home .menu{width:30px;height:30px;padding:5px;gap:5px}
+#home header{padding:calc(9px + env(safe-area-inset-top,0px)) 14px 9px}
+#home .foot{text-align:center}
+#home .copy{margin:0 0 26px;font:italic 400 14px/1.5 "Lato",sans-serif;color:#e8eaf1}
+#home .flinks{display:flex}
+#home .flinks button{background:none;border:0;color:#d6d9e2;font:500 12.5px/1.2 "Noto Sans KR",sans-serif;cursor:pointer}
+#home .flinks button:focus-visible{outline:2px solid #6f93ff;outline-offset:2px}
+#home .after{gap:96px}
+#home .tag{margin-top:-54px}
+#home .mm-tile{margin-top:24px}
+#home .verse{max-width:min(88vw,380px)}
+#home .verse p{font-size:13px;line-height:1.7}
+#home .verse cite{margin-top:8px;font-size:12px}
+#home .foot{padding:56px 16px 56px}
+#home .copy{margin-bottom:48px;font-size:12px}
+#home .go{margin-top:-56px}
+#home .flinks{flex-wrap:nowrap;justify-content:space-between;gap:8px}
+#home .flinks button{font-size:clamp(9px,2.6vw,11px);white-space:nowrap;padding:4px 0}
+#home .verse{margin-top:260px}
+#home .gray{background:#1b1b20}
+#home .verse{margin:0 auto}
+#home .brand{margin:76px 0 0;display:grid;justify-items:center}
+#home .emb{width:64px;height:auto;overflow:visible;filter:drop-shadow(0 0 6px rgba(80,140,235,.5))}
+#home .wm{margin:0;font:900 clamp(34px,11vw,46px)/1 "Lato",sans-serif;letter-spacing:.02em;color:#fff}
+#home .foot{background:none}
+#home .brand{gap:2px}
+#home .brand{margin-top:130px}
+#home .wm{margin-top:-8px;font-size:clamp(26px,8vw,34px)}
+#home .hero .wk{position:relative;z-index:1}
+#home .wk span{font-size:clamp(52px,19vw,104px)}
+#home h1.wk span{font-size:19px}
+#home .after{padding-bottom:360px}
+#home .gray{padding-top:150px}
+#home header{position:relative;z-index:3}
+#home header .wk{position:relative;z-index:1}
+.mermaid .core{transform-box:fill-box;transform-origin:center;animation:corepulse 3.2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){  .mermaid .core{animation:none}}
+.mermaid svg{filter:drop-shadow(0 0 2px rgba(255,235,150,.9))}
+.mermaid{transform-origin:50% 55%}
+#deep{z-index:7}
+#lock{z-index:8}
+#home #list-assets li,#home #list-assets-a li{background:none;border:0;padding:0;align-content:start;justify-items:center;text-align:center}
+#home #list-assets .ic,#home #list-assets-a .ic{aspect-ratio:1;background:#090a11;border:1px solid color-mix(in srgb,var(--c) 40%,transparent);box-shadow:0 0 16px color-mix(in srgb,var(--c) 28%,transparent),inset 0 0 14px color-mix(in srgb,var(--c) 14%,transparent);display:grid;place-items:center}
+#home #list-assets .ic svg,#home #list-assets-a .ic svg{width:48%;height:auto;fill:none;stroke:var(--c);stroke-linecap:round;stroke-linejoin:round}
+#home #list-assets h3,#home #list-assets-a h3{font:600 14px/1.25 "Lato","Noto Sans KR",sans-serif;color:#fff}
+#home #list-assets .ko,#home #list-assets-a .ko{font:500 11px/1.2 "Noto Sans KR",sans-serif;color:#8a93ab;margin-top:-3px}
+#home #list-assets li p,#home #list-assets-a li p{color:#9aa1b5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#home #list-assets .row,#home #list-assets-a .row{flex-direction:column;gap:8px;margin-top:2px}
+@media (min-width:520px){  #home #list-assets,#home #list-assets-a{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:760px){  #home #list-assets,#home #list-assets-a{grid-template-columns:repeat(4,minmax(0,1fr))}}
+#home #list-assets,#home #list-assets-a{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px 8px}
+#home #list-assets li,#home #list-assets-a li{gap:5px}
+#home #list-assets .ic,#home #list-assets-a .ic{border-radius:20%}
+#home #list-assets .ic svg,#home #list-assets-a .ic svg{stroke-width:1;filter:drop-shadow(0 0 2px var(--c)) drop-shadow(0 0 6px var(--c))}
+#home #list-assets .ko,#home #list-assets-a .ko{font-size:9px}
+#home #list-assets li p,#home #list-assets-a li p{font-size:9px;line-height:1.4}
+#home #list-assets .price,#home #list-assets-a .price{font-size:10px}
+#home #list-assets .buy,#home #list-assets-a .buy{width:100%;padding:7px 4px;font-size:10px}
+#home #list-assets .ic,#home #list-assets-a .ic{position:relative;padding:0;font:inherit;cursor:pointer}
+#home #list-assets li.own .ic::after,#home #list-assets-a li.own .ic::after{content:"✓";position:absolute;top:6px;right:6px;width:14px;height:14px;border-radius:50%;background:var(--c);color:#000;font-size:9px;line-height:14px;text-align:center}
+#home #list-assets .ic:focus-visible,#home #list-assets-a .ic:focus-visible{outline:2px solid #6f93ff;outline-offset:3px}
+#home .as-detail{position:absolute;inset:0;z-index:12;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.68);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#home .as-detail[hidden]{display:none}
+#home:not([data-view="insights"]):not([data-view="assets"]) .as-detail{display:none}
+#home .as-card{position:relative;width:min(88vw,340px);box-sizing:border-box;padding:26px 22px 22px;border-radius:24px;background:#0e0f16;border:1px solid color-mix(in srgb,var(--c) 45%,transparent);box-shadow:0 0 34px color-mix(in srgb,var(--c) 28%,transparent);display:grid;justify-items:center;gap:10px;text-align:center}
+#home .as-card .ic{width:112px;aspect-ratio:1;border-radius:22%;background:#090a11;border:1px solid color-mix(in srgb,var(--c) 40%,transparent);box-shadow:0 0 16px color-mix(in srgb,var(--c) 28%,transparent),inset 0 0 14px color-mix(in srgb,var(--c) 14%,transparent);display:grid;place-items:center}
+#home .as-card .ic svg{width:50%;height:auto;fill:none;stroke:var(--c);stroke-width:1;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 2px var(--c)) drop-shadow(0 0 6px var(--c))}
+#home .as-card h3{margin:6px 0 0;font:600 20px/1.25 "Lato","Noto Sans KR",sans-serif;color:#fff}
+#home .as-card .ko{font:500 13px/1.2 "Noto Sans KR",sans-serif;color:#8a93ab}
+#home .as-card p{margin:4px 0 6px;font-size:14px;line-height:1.6;color:#c4c9d6;white-space:pre-line}
+#home .as-card .row{width:100%;display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+#home .as-card .price{font:italic 700 18px/1 "Lato",sans-serif;color:#9db8ff}
+#home .as-card .buy{padding:13px 26px;font-size:15px}
+#home .as-x{position:absolute;top:8px;right:10px;background:none;border:0;color:#8a93ab;font-size:26px;line-height:1;cursor:pointer;padding:6px 10px}
+#home .as-x:focus-visible,#home .as-card .buy:focus-visible{outline:2px solid #6f93ff;outline-offset:3px}
+#home #list-assets .ic,#home .as-card .ic,#home #list-assets-a .ic{border:0}
+#home #list-assets .ic svg,#home .as-card .ic svg,#home #list-assets-a .ic svg{height:auto;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#home .ic .gl{stroke:var(--c)}
+#home .ic .co{stroke:color-mix(in srgb,var(--c) 40%,#fff)}
+#home .ic .co .f{fill:color-mix(in srgb,var(--c) 14%,transparent)}
+#home .ic .co .t{opacity:.9}
+#home #list-assets .ic svg,#home .as-card .ic svg,#home #list-assets-a .ic svg{width:74%}
+#home #list-assets li,#home #list-assets-a li{grid-template-columns:minmax(0,1fr)}
+#home #list-assets h3,#home #list-assets-a h3{overflow-wrap:anywhere}
+#home #list-assets .ko,#home #list-assets-a .ko{overflow-wrap:anywhere}
+#home #list-assets h3,#home #list-assets-a h3{font-size:9.5px;letter-spacing:-.02em}
+#home #v-assets,#home #v-insights{background:#15161c}
+#home .ic .gl{stroke-width:2.1}
+#home .ic .gl .t{stroke-width:1.2}
+#home .ic .co{stroke-width:.82}
+#home .ic .co .t{stroke-width:.55}
+#home #list-assets .ic,#home .as-card .ic,#home #list-assets-a .ic{background:color-mix(in srgb,var(--c) 6%,#07080d);box-shadow:0 0 6px color-mix(in srgb,var(--c) 5%,transparent),inset 0 0 16px color-mix(in srgb,var(--c) 11%,transparent)}
+#home #list-assets .ic svg,#home .as-card .ic svg,#home #list-assets-a .ic svg{filter:drop-shadow(0 0 3px color-mix(in srgb,var(--c) 30%,transparent))}
+#home .ic .gl{opacity:.16}
+#home #list-assets .ic,#home #list-assets-a .ic{width:84%}
+#home .upc{margin:14px 0 4px;text-align:center;font:italic 700 13px/1 "Lato","Noto Sans KR",sans-serif;letter-spacing:.14em;color:#9db8ff}
+#home #list-assets[hidden],#home #list-assets-a[hidden]{display:none}
+#home #v-insights{padding-top:52px;text-align:center}
+#home .ia-head h2{font:700 17px/1.3 "Lato","Noto Sans KR",sans-serif;letter-spacing:0;color:#fff}
+#home .ia-head p{margin:16px 0 0;font:400 13px/1.6 "Noto Sans KR",sans-serif;color:#d6d9e2}
+#home .ia-sec{margin-top:110px}
+#home .ia-sec h3{margin:0;font:italic 700 18px/1.3 "Lato","Noto Sans KR",sans-serif;color:#e8eaf1}
+#home .ia-sec p{margin:22px 0 0;font:400 13px/1.6 "Noto Sans KR",sans-serif;color:#d6d9e2}
+#home #ia-now{min-height:120px}
+#home #ia-now{min-height:60px}
+#home .ia-sec #list-assets,#home .ia-sec #list-assets-a{margin-top:34px}
+#home .ic .gl{stroke-width:1.2;opacity:.2}
+#home .ic .gl .t{stroke-width:.8}
+#home .ic .co{stroke-width:.5}
+#home .ic .co .t{stroke-width:.34;opacity:.85}
+#home #list-assets .ic,#home .as-card .ic,#home #list-assets-a .ic{background:radial-gradient(circle at 50% 44%,color-mix(in srgb,var(--c) 40%,#05060a) 0%,color-mix(in srgb,var(--c) 17%,#05060a) 58%,#05060a 100%);box-shadow:none;border:0;border-radius:22%}
+#home #list-assets .ic,#home #list-assets-a .ic{width:88%}
+#home #v-assets #list-assets-a{margin-top:34px}
+#home h1.lg{margin:0;padding:0;border:0;border-radius:0;font:italic 700 17px/1 "Lato","Noto Sans KR",sans-serif;letter-spacing:.02em;color:#fff;white-space:nowrap}
+#home .ia-leg{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:24px auto 0;max-width:350px}
+#home .chip{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;border:1px solid color-mix(in srgb,var(--c) 38%,transparent);background:color-mix(in srgb,var(--c) 9%,#0b0c10);color:#e8eaf1;font:500 11px/1 "Noto Sans KR",sans-serif;cursor:pointer}
+#home .chip i{width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 6px var(--c)}
+#home .chip[aria-pressed="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 26%,#0b0c10)}
+#home .chip:focus-visible{outline:2px solid #6f93ff;outline-offset:2px}
+#home #list-assets li,#home #list-assets-a li{transition:opacity .2s}
+#home #list-assets li.dim,#home #list-assets-a li.dim{opacity:.16}
+#home .ia-sec #list-assets{margin-top:28px}
+</style>
+</head>
+<body>
+<div id="track">
+ <div class="stage" id="stage">
+  <div class="sea" id="sea">
+   <div class="mermaid">
+    <svg viewBox="0 0 190 260" xmlns="http://www.w3.org/2000/svg" aria-label="인어">
+     <defs>
+      <radialGradient id="fmb" gradientUnits="userSpaceOnUse" cx="60" cy="100" r="125"><stop offset="0" stop-color="#ffbd4a"/><stop offset=".35" stop-color="#e8691a"/><stop offset=".75" stop-color="#9a2f0b"/><stop offset="1" stop-color="#5a1a08"/></radialGradient>
+      <radialGradient id="fmc"><stop offset="0" stop-color="#fff6cf" stop-opacity=".95"/><stop offset=".35" stop-color="#ffb43c" stop-opacity=".6"/><stop offset="1" stop-color="#ff8a1e" stop-opacity="0"/></radialGradient>
+      <linearGradient id="fgold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffbe3"/><stop offset="1" stop-color="#ffbb3a"/></linearGradient>
+     </defs>
+     <g fill="url(#fmb)" stroke="url(#fgold)" stroke-width="1.8" stroke-linejoin="round">
+      <g class="fin"><path d="M114 234C134 236 156 222 166 202C171 192 174 183 177 176C166 177 154 181 146 190C139 198 130 205 120 206C111 205 104 194 100 184C98 179 97 174 97 170C97 187 102 203 107 215C109 221 107 226 102 228Z"/></g>
+      <path d="M52 10C44 10 38 15 37 22C36.5 26 36 29 35 32C33.5 35 32 38 32.5 39.5C33 41 35 41 35.5 41.5C35 43 35 44 36 45C35.5 47 36.5 48 37 49C37 51 38 53 40.5 54C44 55 47 55 48.5 56C49.5 62 49 66 46 70C43 74 38 78 37.5 84C37 89 40 92 42 94C45 98 48 102 48 108C48 116 47 122 45 130C40 146 33 162 32 180C31 200 36 224 51 240C61 250 77 253 92 248C101 245 108 240 114 234L101 225C88 235 72 232 65 219C59 205 64 188 76 170C86 156 94 144 92 130C91 120 82 112 76 104C72 98 78 88 82 80C85 74 82 68 76 63C70 59 63 58 60 52L62 30C62 18 58 10 52 10Z"/>
+      <path d="M50 104C44 104 36 108 30 110C26 111 22 109 19 110C17 111 17 113 20 113.5C24 114.5 28 115.5 31 116C38 117 44 119 50 118Z"/>
+      <g class="hair"><path d="M52 9C66 8 80 14 86 26C92 38 104 46 118 54C134 62 146 76 148 92C149 104 145 114 140 120C140 112 137 106 132 103C133 112 130 120 125 125C119 116 120 106 124 98C112 92 100 86 90 80C82 74 76 66 70 58C66 52 64 44 63 36L62 28Z"/>
+       <g transform="translate(56 21) scale(1.3)" stroke="none"><circle r="16" fill="url(#fmc)"/><path d="M0-10L.84-2.03L4.24-4.24L2.03-.84L10 0L2.03 .84L4.24 4.24L.84 2.03L0 10L-.84 2.03L-4.24 4.24L-2.03 .84L-10 0L-2.03-.84L-4.24-4.24L-.84-2.03Z" fill="url(#fgold)"/></g></g>
+     </g>
+     <circle class="core" cx="56" cy="92" r="24" fill="url(#fmc)"/>
+    </svg>
+   </div>
+   <svg class="wave back" viewBox="0 0 1600 1000" preserveAspectRatio="none"><path d="M0 90Q100 20 200 90T400 90T600 90T800 90T1000 90T1200 90T1400 90T1600 90V1000H0Z" fill="#3a78d8"/></svg>
+   <svg class="wave mid" viewBox="0 0 1600 1000" preserveAspectRatio="none"><path d="M0 80Q200 10 400 80T800 80T1200 80T1600 80V1000H0Z" fill="#1f5bc4"/></svg>
+   <svg class="wave front" viewBox="0 0 1600 1000" preserveAspectRatio="none"><defs><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1648b8"/><stop offset=".25" stop-color="#0b2f8f"/><stop offset="1" stop-color="#061a63"/></linearGradient></defs><path d="M0 80Q200 0 400 80T800 80T1200 80T1600 80V1000H0Z" fill="url(#fg)"/></svg>
+   <div class="hint" id="hint">scroll down<span>↓</span></div>
+  </div>
+  <div id="deep"></div>
+  <form id="lock" autocomplete="off">
+   
+   <input id="pw" type="password" inputmode="text" autocomplete="off" aria-label="코드" aria-describedby="msg" tabindex="-1">
+   <div id="msg" role="status"></div>
+  </form>
+ </div>
+</div>
+<div id="home" data-view="home">
+ <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="boat" viewBox="0 0 190 260"><g fill="currentColor"><path d="M52 10C44 10 38 15 37 22C36.5 26 36 29 35 32C33.5 35 32 38 32.5 39.5C33 41 35 41 35.5 41.5C35 43 35 44 36 45C35.5 47 36.5 48 37 49C37 51 38 53 40.5 54C44 55 47 55 48.5 56C49.5 62 49 66 46 70C43 74 38 78 37.5 84C37 89 40 92 42 94C45 98 48 102 48 108C48 116 47 122 45 130C40 146 33 162 32 180C31 200 36 224 51 240C61 250 77 253 92 248C101 245 108 240 114 234L101 225C88 235 72 232 65 219C59 205 64 188 76 170C86 156 94 144 92 130C91 120 82 112 76 104C72 98 78 88 82 80C85 74 82 68 76 63C70 59 63 58 60 52L62 30C62 18 58 10 52 10Z"/><path d="M50 104C44 104 36 108 30 110C26 111 22 109 19 110C17 111 17 113 20 113.5C24 114.5 28 115.5 31 116C38 117 44 119 50 118Z"/><path d="M114 234C134 236 156 222 166 202C171 192 174 183 177 176C166 177 154 181 146 190C139 198 130 205 120 206C111 205 104 194 100 184C98 179 97 174 97 170C97 187 102 203 107 215C109 221 107 226 102 228Z"/><path d="M52 9C66 8 80 14 86 26C92 38 104 46 118 54C134 62 146 76 148 92C149 104 145 114 140 120C140 112 137 106 132 103C133 112 130 120 125 125C119 116 120 106 124 98C112 92 100 86 90 80C82 74 76 66 70 58C66 52 64 44 63 36L62 28Z"/></g><path transform="translate(56 21) scale(3)" d="M0-6.5L1.5-2.1L6.2-2L2.4 0.8L3.8 5.3L0 2.6L-3.8 5.3L-2.4 0.8L-6.2-2L-1.5-2.1Z" fill="#f0b429"/></symbol></svg>
+ <header>
+  <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><use href="#boat"/></svg>
+  <h1 class="lg">START YOUR LEGEND</h1>
+  <button class="menu" type="button" aria-label="메뉴"><i></i><i></i><i></i></button>
+ </header>
+ <main>
+  <section class="hero">
+   <div class="wk"><span>Wokeup</span></div>
+  </section>
+  <section class="after">
+   <p class="quote">“Be The Real One”</p>
+   <p class="tag">‘있어 보는 법이 아닌, 진짜 있어지는 법’</p>
+   <div class="mm-tile"><svg class="mm2" viewBox="0 0 190 260" role="img" aria-label="인어">
+    <defs>
+     <radialGradient id="mgb" gradientUnits="userSpaceOnUse" cx="60" cy="100" r="110"><stop offset="0" stop-color="#4a86e0"/><stop offset=".3" stop-color="#1f4a8f"/><stop offset=".7" stop-color="#0a1830"/><stop offset="1" stop-color="#070f1d"/></radialGradient>
+     <radialGradient id="mgc"><stop offset="0" stop-color="#fff6cf" stop-opacity=".95"/><stop offset=".35" stop-color="#f0c96a" stop-opacity=".55"/><stop offset="1" stop-color="#f0c96a" stop-opacity="0"/></radialGradient>
+     <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3e2b3"/><stop offset="1" stop-color="#b8995a"/></linearGradient>
+    </defs>
+    <g id="mmart" fill="url(#mgb)" stroke="url(#gold)" stroke-width="1.6" stroke-linejoin="round">
+     <path d="M114 234C134 236 156 222 166 202C171 192 174 183 177 176C166 177 154 181 146 190C139 198 130 205 120 206C111 205 104 194 100 184C98 179 97 174 97 170C97 187 102 203 107 215C109 221 107 226 102 228Z"/>
+     <path d="M52 10C44 10 38 15 37 22C36.5 26 36 29 35 32C33.5 35 32 38 32.5 39.5C33 41 35 41 35.5 41.5C35 43 35 44 36 45C35.5 47 36.5 48 37 49C37 51 38 53 40.5 54C44 55 47 55 48.5 56C49.5 62 49 66 46 70C43 74 38 78 37.5 84C37 89 40 92 42 94C45 98 48 102 48 108C48 116 47 122 45 130C40 146 33 162 32 180C31 200 36 224 51 240C61 250 77 253 92 248C101 245 108 240 114 234L101 225C88 235 72 232 65 219C59 205 64 188 76 170C86 156 94 144 92 130C91 120 82 112 76 104C72 98 78 88 82 80C85 74 82 68 76 63C70 59 63 58 60 52L62 30C62 18 58 10 52 10Z"/>
+     <path d="M50 104C44 104 36 108 30 110C26 111 22 109 19 110C17 111 17 113 20 113.5C24 114.5 28 115.5 31 116C38 117 44 119 50 118Z"/>
+     <path d="M52 9C66 8 80 14 86 26C92 38 104 46 118 54C134 62 146 76 148 92C149 104 145 114 140 120C140 112 137 106 132 103C133 112 130 120 125 125C119 116 120 106 124 98C112 92 100 86 90 80C82 74 76 66 70 58C66 52 64 44 63 36L62 28Z"/>
+    </g>
+    <circle class="core" cx="56" cy="92" r="24" fill="url(#mgc)"/>
+    <g transform="translate(56 21) scale(1.3)"><circle r="16" fill="url(#mgc)"/><path d="M0-10L.84-2.03L4.24-4.24L2.03-.84L10 0L2.03 .84L4.24 4.24L.84 2.03L0 10L-.84 2.03L-4.24 4.24L-2.03 .84L-10 0L-2.03-.84L-4.24-4.24L-.84-2.03Z" fill="url(#gold)"/></g>
+   </svg></div>
+   <button class="go" type="button">Start your Legend</button>
+  </section>
+  <div class="gray">
+   <figure class="verse"><p>Those who live in the shelter of the Most High will find rest in the shadow of the Almighty. This I declare about the LORD: He alone is my refuge, my place of safety; he is my God, and I trust him.</p><cite>Psalm 91:1-2</cite></figure>
+   <div class="brand">
+    <svg class="emb" viewBox="0 0 190 260" aria-hidden="true"><use href="#mmart"/><circle cx="56" cy="92" r="24" fill="url(#mgc)"/><g transform="translate(56 21) scale(1.3)"><circle r="16" fill="url(#mgc)"/><path d="M0-10L.84-2.03L4.24-4.24L2.03-.84L10 0L2.03 .84L4.24 4.24L.84 2.03L0 10L-.84 2.03L-4.24 4.24L-2.03 .84L-10 0L-2.03-.84L-4.24-4.24L-.84-2.03Z" fill="url(#gold)"/></g></svg>
+    <p class="wm">WOKEUP</p>
+   </div>
+   <footer class="foot">
+   <p class="copy">© 2026-2026 Wokeup. All Rights Reserved</p>
+   <nav class="flinks" aria-label="사이트 정보"><button type="button">앱소개</button><button type="button">이용약관</button><button type="button">개인정보 처리방침</button><button type="button">사업자 정보확인</button><button type="button">환불규정</button></nav>
+  </footer>
+  </div>
+ </main>
+ <section class="view" id="v-assets" aria-label="Assets"><h2>Assets</h2><p class="upc">Upcoming 준비중</p><ul id="list-assets-a"></ul></section>
+ <section class="view" id="v-insights" aria-label="Insights">
+  <div class="ia-head"><h2>Insight Add-ons</h2><p>인사이트 애드온에 선별적으로 접근해보세요.</p></div>
+  <div class="ia-sec" id="ia-now"><h3>Now Available</h3></div>
+  <div class="ia-sec"><h3>Upcoming</h3><p>※ 곧 공개될 인사이트입니다.</p><div class="ia-leg" id="ia-leg"></div><ul id="list-assets"></ul></div>
+ </section>
+ <section class="view" id="v-inventory" aria-label="Inventory"><h2>Inventory</h2><p class="sub">Assets에서 받은 항목</p><ul id="list-inv"></ul><p class="empty" id="inv-empty">아직 구매한 강의가 없어요.</p></section>
+ <section class="view" id="v-soon"><p class="empty">준비 중이에요.</p></section>
+ <section class="view" id="v-reader" aria-label="열람"><div class="rd-top"><button type="button" class="back" id="rd-back">← Inventory</button><button type="button" class="how" id="rd-how" hidden>How to use</button></div><h2 id="rd-title"></h2>
+  <div class="tt-sheet" id="how-sheet" hidden><div class="tt-panel" role="dialog" aria-label="How to use">
+   <h3>How to use</h3>
+   <p class="how-h">시간표</p>
+   <p class="how-i">+ 버튼이나 비어 있는 시간대를 눌러 일정을 추가해요.</p>
+   <p class="how-i">색 블록을 누르면 수정하거나 삭제할 수 있어요.</p>
+   <p class="how-i">위의 요일을 눌러 다른 날을 볼 수 있고, 빨간 선은 지금 시각이에요.</p>
+   <p class="how-h">5년 후의 나</p>
+   <p class="how-i">5년 뒤의 모습을 1·2·3번 칸에 적어요. 자동으로 저장돼요.</p>
+   <p class="how-i">일요일마다 다시 열어 고쳐 써 보세요.</p>
+   <button type="button" class="del" id="how-close">닫기</button>
+  </div></div><div id="rd-body"></div>
+  <div id="st" hidden>
+   <div class="st-status" id="st-status"></div>
+   <div class="st-idx" id="st-idx"></div>
+   <p class="st-h">관심 종목</p>
+   <div class="st-list" id="st-list"></div>
+   <form class="st-form" id="st-form" autocomplete="off"><input id="st-t" type="text" placeholder="티커 입력 (예: AMD)" maxlength="6" autocapitalize="characters" aria-label="티커"><button class="buy" type="submit">추가</button></form>
+   <p class="st-note" id="st-note"></p>
+  </div>
+  <div id="tt" hidden>
+   <div class="tt-tabs" id="tt-tabs"><button type="button" class="on" data-m="tt">시간표</button><button type="button" data-m="bl">5년 후의 나</button></div>
+   <div class="tt-now" id="tt-now"></div>
+   <div class="tt-days" id="tt-days"></div>
+   <div class="tt-grid" id="tt-grid"></div>
+   <button class="tt-add" id="tt-add" type="button" aria-label="일정 추가">+</button>
+   <div id="bl">
+    <div class="bl-hero" id="bl-hero"></div>
+    <div class="bl-slots" id="bl-slots"></div>
+   </div>
+   <div class="tt-sheet" id="tt-sheet" hidden>
+    <form class="tt-panel" id="tt-form" autocomplete="off">
+     <h3 id="tt-sh-title">새 일정</h3>
+     <input type="text" id="tt-t" placeholder="무엇을 할까요?" maxlength="40" aria-label="할 일" required>
+     <div class="tt-times"><label>시작<input type="time" id="tt-s" required></label><label>종료<input type="time" id="tt-e" required></label></div>
+     <div class="tt-actions"><button type="button" class="del" id="tt-del" hidden>삭제</button><button type="button" class="del" id="tt-cancel">닫기</button><button type="submit" class="buy">저장</button></div>
+    </form>
+   </div>
+  </div></section>
+ <div id="toast" role="status"></div>
+ <div class="as-detail" id="as-detail" hidden><div class="as-card" role="dialog" aria-modal="true" aria-label="강의 자세히 보기">
+  <button type="button" class="as-x" id="as-x" aria-label="닫기">×</button>
+  <div class="ic" id="as-ic"></div><h3 id="as-t"></h3><span class="ko" id="as-ko"></span><p id="as-d"></p>
+  <div class="row"><span class="price" id="as-p"></span><button class="buy" id="as-buy" type="button"></button></div>
+ </div></div>
+ <nav id="tabs" aria-label="하단 메뉴">
+  <button type="button" data-v="assets"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="5" height="14" rx="1"/><rect x="9.5" y="5" width="5" height="14" rx="1"/><rect x="16" y="7" width="5" height="12" rx="1"/></svg>Assets</button>
+  <button type="button" data-v="inventory"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M9 8V6a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M3 13h18M11 13v2h2v-2"/></svg>Inventory</button>
+  <button type="button" data-v="home" aria-current="page"><svg class="boat" viewBox="0 0 40 40" aria-hidden="true"><use href="#boat"/></svg>AI</button>
+  <button type="button" data-v="insights"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 4.5A3 3 0 0 0 9 20a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"/><path d="M15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 4.5A3 3 0 0 1 15 20a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg>Insights</button>
+  <button type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Connect</button>
+ </nav>
+</div>
+<script>
+(function(){
+  var tabs = document.querySelectorAll('#tabs button');
+  tabs.forEach(function(b){ b.addEventListener('click', function(){
+    tabs.forEach(function(x){ x.removeAttribute('aria-current'); });
+    b.setAttribute('aria-current', 'page');
+    document.getElementById('home').setAttribute('data-view', b.getAttribute('data-v') || 'soon');
+  }); });
+})();
+
+// 강의 목록 · 구매 → Inventory (데모: 결제 없이 이 브라우저에만 저장)
+(function(){
+  // 아래 목록을 실제 강의 정보로 바꾸세요.
+  var COURSES = [
+    {id:'t1', title:'Time Table [시간표]', desc:'어떻게 현재에 몰입하며, 미래를 보는가', price:'무료'},
+    {id:'t2', title:'Stock [주식]', desc:'풍요로움을 얻는 ‘필수적인’ 수단\n가치에 투자하라', price:'무료'},
+    {id:'t3', title:'Bible [성경]', desc:'모든 시중 자기계발서의 원본,\n인류 무의식의 원형 제대로 읽기', price:'무료'},
+    {id:'t4', title:'My thought [나의 생각]', desc:'내가 세상을 보는 방식\n① Social Issue analyze — 미디어의 긴 코 자르기 (사회적 이슈를 ‘진짜’ 분석으로)\n② Philosophy — ‘진짜’의 머릿속 사상 엿보기', price:'무료'},
+    {id:'t5', title:'Product Recommendation [제품 추천]', desc:'‘직접’ 써보고, ‘면밀히’ 분석한 제품들…', price:'무료'},
+    {id:'t6', title:'Food Recipe [음식 레시피]', desc:'맛의 디테일함, 어떻게 맛있어지는가.', price:'무료'},
+    {id:'t7', title:'Language acquisition theory [언어획득이론]', desc:'언어는 수백 개지만, 방법은 하나다', price:'무료'},
+    {id:'t8', title:'The Art of Dressing [옷]', desc:'옷은 주인공이 아니다,\n당신을 향한 조명으로 만들어라', price:'무료'}
+  ];
+  // 강의 id → 본문. 예: CONTENT['t1'] = '글 내용…';
+  var CONTENT = {};
+  var MORE = [
+    'Body Language [몸짓]|신뢰를 주는 최소한의 태도',
+    'This Month’s Book [책]|한 달에 한 권 읽었던 책을 추천해줍니다',
+    'Book [책]|최고/최악의 책들을 요약하고 인사이트를 담은 분석을 제공합니다',
+    'Philosophy [철학]|나의 철학은 아니지만, 수천명의 훌륭한 철학을 ‘전부’ 알려드립니다\n① 동양 — 불교, 자이나교, 육사외도, 힌두교, 유가, 도가 …\n② 서양 — 밀레투스, 엘레아, 헤라클레이토스, 피타고라스…',
+    'Asceticism [금욕주의]|욕구는 행동의 원천이지만, 유한하다',
+    'AI [인공지능]|AI 강의에서 다루는 허상에서 벗어나라',
+    'Ching [주역]|이순신 장군이 사용한 주역, 영성의 시작',
+    'Saju [사주]|사주명리학을 매우 쉽게',
+    'Tarot [타로]|가장 간단한 역학, 역학의 시작, 타로카드',
+    'Name theory [성명학]|한글 이름(성명)을 바탕으로한 이론',
+    'Feng Shui [풍수지리]|풍수의 기초, 편안한 환경을 바란다면…',
+    'Face Reading [관상]|경험과 비경험의 합으로 분석한, 21세기 필수 비과학',
+    'Divinity [신학]|신이란 무엇인가, ‘무엇’일까?',
+    'Handwriting Style [글씨체]|‘교양있음’의 기본, 글씨체',
+    'Astronomy [천문학]|지구부터 우주까지, 그리고 인류까지',
+    'Alien [외계인]|외계인은 실재할까?, 검증된 모든 정보들로만 분석',
+    'Coffee [커피]|기호식품, 커피를 올바르게 섭취하는 ‘유일한’ 방법',
+    'Great Human [위인]|가장 위대했던 사람들이 가졌던 공통된 원리',
+    'Service [서비스]|서비스는 최고의 조미료다',
+    'Fictional Species [상상속 동물]|고대부터 이어진 인간의 상상력을 볼 수 있고, 아이디어를 얻을 수 있습니다',
+    'Greek Myth [그리스 신화]|그리스 신화의 압축본',
+    'Egyptian Myth [이집트 신화]|이집트 신화의 압축본',
+    'Aztec Myth [아즈텍 신화]|아즈텍 신화의 압축본',
+    'Maya Myth [마야 신화]|마야 신화의 압축본',
+    'Inca Myth [잉카 신화]|잉카 신화의 압축본',
+    'Chinese Myth [중국 신화]|중국 신화의 압축본',
+    'Japanese Myth [일본 신화]|일본 신화의 압축본',
+    'Korean Myth [한국 신화]|한국 신화의 압축본',
+    'Mongol Myth [몽골 신화]|몽골 신화의 압축본',
+    'Hindu Myth [인도 신화]|인도 신화의 압축본',
+    'Persian Myth [페르시아 신화]|페르시아 신화의 압축본',
+    'Mesopotamian Myth [메소포타미아 신화]|메소포타미아 신화의 압축본',
+    'Computer-Hardware [컴퓨터 하드웨어]|하드웨어의 기본',
+    'Computer-Software [컴퓨터 소프트웨어]|소프트웨어의 기본',
+    'Politics [정치]|좌·우를 벗어난 ‘진짜’ 정치',
+    'Korean History [한국사]|‘진짜’의 코멘트가 첨가된 실용적인 한국사',
+    'World History [세계사]|전세계 거의 모든 나라의 중요한 역사',
+    'Immigration [이민]|왜, 탈 한국을 해야 하고 어떻게, 탈 한국을 하는가',
+    'Investment [투자]|주식이외의 부동산, 금, 달러, 채권, 시계, 차, 그림등 모든 투자의 방법과 장단점',
+    'Karma [업보]|카르마는 어떻게 작용하고, 운은 어떻게 쌓는가',
+    'Cleaning [청소]|흔적을 남기지 않는 사람이 되는 방법, 남긴 흔적을 지우는 방법',
+    'Sleeping [잠]|잠의 모든 과학과 잘 자는 방법',
+    'Watch [시계]|아무도 가르쳐주지 않는 시계 예절과 가치있는 시계',
+    'Drink [술]|올바른 음주, 길들이기와 좋은 술의 리스트',
+    'Travel [여행]|우리는 어떻게, 왜, 어디로 여행 해야하는가',
+    'Restaurant [맛집]|취향이 있는 사람의 전국 맛집 list',
+    'Math [수학]|알아야할 기초 수학을 매우 쉽게 배우기',
+    'Science [과학]|알아야할 기초 과학을 매우 쉽게 배우기',
+    'Music Playlist [플레이리스트]|플레이리스트 속 모든 음악 분석',
+    'Album [앨범]|주관이 담긴 음악 앨범 분석',
+    'Perfume [향수]|향수 예절과 방법 그리고 훌륭한 향수들',
+    'Logics [논리학]|교양을 위한 논리학',
+    'Car [자동차]|자동차의 구동방식과 가치있는 자동차들',
+    'Philosophy [철학]|‘진짜’의 주관이 담긴 동·서양 철학 분석',
+    'Medication [의약]|올바른 약 복용과 백신과 치료 방법, 더 이상 의사를 보지마라',
+    'Dessert [디저트]|귀족의 취미, 디저트',
+    'Color [색감]|감도 높은 색감을 갖춰라',
+    'How to choose your Home [주거]|어떤 주거환경에서 살아야하는가',
+    'Unconsciousness [무의식]|본질은 물질을 앞선다, 어떻게 무의식을 바꿀 수 있는가',
+    'Security [보안]|90% 이상이 문을 열고 사는 시대',
+    'Furniture [가구]|좋은 가구는 무엇인가, 주제에 맞는 가구',
+    'Geoscience [지구과학]|시험이 아닌, 교양을 위한 지구과학',
+    'Chemistry [화학]|시험이 아닌, 교양을 위한 화학',
+    'Biology [생물학]|시험이 아닌, 교양을 위한 생물학',
+    'Physics [물리학]|시험이 아닌, 교양을 위한 물리학',
+    'Self-Reliance [자기신뢰]|미국을 패권국으로 만든 자기 신뢰를 가지는 법',
+    'Unbreakable man [멘탈]|무너지지 않는 사람이 되는 방법',
+    'Trend 20□□ [트렌드 20□□]|각 해의 트렌드 분석',
+    'Today Bible [성경구절]|오늘의 성경구절 읽기 기능',
+    'Death [죽음]|죽음에 대한 모든 이론, 죽음으로 삶 배우기',
+    'Skin Management [피부관리]|피부의 원리와 모두가 속고있는 수십가지 가짜지식',
+    'Shower [샤워]|아무도 가르쳐주지않는 샤워의 디테일함',
+    'Apple Guide [애플]|애플 제품 속 디테일함과 면밀한 분석을 통한 제품추천',
+    'Exercise [운동]|어떤 운동이 건강한지, 어떻게 해야하는지',
+    'Movie [영화]|영화에 대한 간단한 코멘트 및 추천',
+    'Buddhism [불교]|불교철학은 왜 ‘악’한가',
+    'Family [가정]|가정이 풍만해지는 ‘유일’한 방법',
+    'Coding [코딩]|자신의 생각을 그대로 구현하는 코딩 방법',
+    'Hormone [호르몬]|우리는 호르몬의 노예가 아니다, 호르몬을 우리의 노예로 만드는법',
+    'Dopamine Detox [도파민 디톡스]|동기의 본질부터 파악해라',
+    'Success [성공]|성공의 가장 ‘기초’ 원리',
+    'Cooking (theory) [음식 이론]|왜 맛있고, 왜 맛없는가.',
+    'How to think [생각하기]|독립적 사고를 위한 ‘두가지’ 방법',
+    'Time Management [시간관리]|왜 ‘당신의 시간에는 배속이 걸리는가',
+    'Diet [식단]|현대인을 위한 올바른 식단',
+    'Manner [예절]|호감을 위함이 아닌, 비호감을 막기위하여',
+    'Gardening [원예]|매번 당신의 식물이 죽는 이유, 건강한 식물과 피해야할 식물',
+    'Presentation [발표]|당신의 주장을 효율적으로 돕는 보조적 방법',
+    'Speech [연설]|연설은 1분 만에 결과가 결정된다',
+    'Painting [그림]|명화의 뒷 이야기 살펴보기',
+    'Photography [사진]|취향을 담아 ‘효율적으로’ 사진 찍기',
+    'Lie [거짓말]|‘내 계좌에는 천 억이 있습니다’도 믿게하는 법과, 거짓말 알아채는 법',
+    'Law [법]|한국에서 필요한 최소한의 법 (1,000만원 아끼기)',
+    'Leadership [리더쉽]|사람을 다루지 말고, 집단을 다뤄라',
+    'Persuasion [설득]|개살구를 팔지말아라.',
+    'Humor [유머]|재밌는 말하기의 호흡과 코미디의 ‘모든’것',
+    'Video Making [영상제작]|당신의 영상에는 향기가 없다. 매력적인 영상 만드는 법',
+    'Psychology [심리학]|껍데기는 버린 최고의 현대 심리학',
+    'Evolutionary Psychology [진화 심리학]|모든 인간의 행동에는 이유가 있다',
+    'Finance [금융]|지출을 줄이지 말고, 소득을 늘려라, 진짜 가치를 만드는 ‘경제학’',
+    'Tea [차]|감정을 움직이는 섬세함의 차',
+    'Health [건강]|현대 의학이 말 해주지 않는 ‘진짜’ 건강',
+    'Korean character [한자]|한글을 ‘완전히’ 이해하는 ‘유일’한 방법',
+    'English [영어]|당신이 12년간 공교육으로 영어를 배워도 한마디도 못하는 이유',
+    'Japanese [일본어]|일본인은 히라가나·가타카나로 언어를 시작하지 않는다',
+    'How to Write [글쓰기]|매력적인 글 쓰기 비법',
+    'How to Sell [세일즈 ≒ Marketing]|판매전략에 대한 인사이트',
+    'How to love [사랑]|성경을 바탕으로 남녀가 공존하는 방식\n(존경받는 남자 & 사랑받는 여자)',
+    'Vocabulary [어휘]|어휘의 뿌리부터 이해하고 오래 기억하는 방법',
+    'Forensics [법의학]|현장의 증거를 읽고 진실에 다가가는 법의학의 기초',
+    'Computer [컴퓨터]|컴퓨터가 동작하는 원리를 처음부터 차근차근',
+    'Artist [예술가]|창작의 시선으로 세상을 보고 나만의 작품을 만드는 법'
+  ];
+  MORE.forEach(function(s, i){ var p = s.split('|'); COURSES.push({id:'u' + i, title:p[0], desc:p[1], price:'무료'}); });
+  // 메모 사진 순서(첫 사진 왼쪽 줄 위→아래, 다음 줄… 이어서 두 번째, 세 번째 사진)로 정렬
+  (function(){
+    function rg(a, b){ var r = []; for (var k = a; k <= b; k++) r.push('u' + k); return r; }
+    var seq = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8'].concat(rg(81, 89), rg(90, 98), rg(99, 107), rg(34, 48), rg(49, 64), rg(65, 80), rg(0, 9), rg(10, 23), rg(24, 33), rg(108, 111));
+    var by = {}; COURSES.forEach(function(c){ by[c.id] = c; });
+    COURSES = seq.map(function(id){ return by[id]; });
+  })();
+  var KEY = 'legend.inventory', inv = [], tt = null;
+  try { inv = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e) { inv = []; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(inv)); } catch(e) {} }
+  function has(id){ return inv.some(function(x){ return x.id === id; }); }
+  function $(id){ return document.getElementById(id); }
+  function el(t, c, x){ var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function toast(m){ var t = $('toast'); t.textContent = m; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(function(){ t.classList.remove('on'); }, 1800); }
+  var NEON = ['#3d7bff', '#b347ff', '#ff8a2b', '#2ee66b', '#ff4d6d', '#19d3ff', '#ffd23a'];
+  var CATS = [['A', '마음·사고', '#b347ff'], ['B', '몸·건강', '#2ee66b'], ['C', '신화·종교', '#ffd23a'], ['D', '점술·동양학', '#ff4df0'], ['E', '사회·세계', '#19d3ff'], ['F', '돈·일', '#ff8a2b'], ['G', '언어·글', '#3d7bff'], ['H', '과학·기술', '#3dffc4'], ['I', '취향·생활', '#ff4d6d'], ['J', '예술·창작', '#b6ff3d']];
+  var CATIDS = {A:'t4 u3 u4 u17 u51 u53 u58 u65 u66 u79 u80 u82 u91 u94 u97 u98', B:'u41 u54 u70 u71 u73 u78 u84 u101', C:'t3 u12 u19 u20 u21 u22 u23 u24 u25 u26 u27 u28 u29 u30 u31 u39 u68 u69 u75', D:'u6 u7 u8 u9 u10 u11', E:'u34 u35 u36 u37 u59 u67 u76 u85 u92 u107', F:'t1 t2 u18 u38 u83 u87 u88 u93 u99 u106', G:'t7 u0 u13 u102 u103 u104 u105 u108', H:'u5 u14 u15 u32 u33 u46 u47 u61 u62 u63 u64 u77 u109 u110', I:'t5 t6 t8 u16 u40 u42 u43 u44 u45 u50 u52 u55 u56 u57 u60 u72 u81 u86 u100', J:'u1 u2 u48 u49 u74 u89 u90 u95 u96 u111'};
+  var CATOF = {};
+  CATS.forEach(function(c){ CATIDS[c[0]].split(' ').forEach(function(id){ CATOF[id] = c; }); });
+  function colorOf(c){ return (CATOF[c.id] || [0, 0, NEON[0]])[2]; }
+  var ICO = {
+    t1:'<circle class="f" cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/><path class="t" d="M12 3.5V5M12 19v1.5M3.5 12H5M19 12h1.5"/><circle cx="12" cy="12" r=".8"/>',
+    t2:'<path d="M4 3v17h17"/><path class="f" d="M7 11h3v6H7zM12 7h3v7h-3zM17 9h3v5h-3z"/><path class="t" d="M8.5 8v3M8.5 17v2M13.5 4v3M13.5 14v2M18.5 6v3M18.5 14v2"/>',
+    t3:'<path class="f" d="M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M12 7v7M9.5 9.5h5"/><path class="t" d="M8 18h8M4 17h14"/>',
+    t4:'<path class="f" d="M7 15a4 4 0 0 1-.5-7.8 5.5 5.5 0 0 1 10.5-1A4.2 4.2 0 0 1 17.5 15z"/><path class="t" d="M12 7.5a2.5 2.5 0 0 0-1.2 4.5v1h2.4v-1A2.5 2.5 0 0 0 12 7.5zM11 14h2"/><circle class="t" cx="7" cy="19" r="1.2"/><circle class="t" cx="4.5" cy="21.5" r=".8"/>',
+    t5:'<path class="f" d="M4 10h16v10H4z"/><path d="M3 7h18v3H3zM12 7v13"/><path d="M12 7c-1-3-5-4-5-1.5C7 7 12 7 12 7zM12 7c1-3 5-4 5-1.5C17 7 12 7 12 7z"/><path class="t" d="M20 2l.5 1.2 1.3.1-1 .9.3 1.3-1.1-.7-1.1.7.3-1.3-1-.9 1.3-.1z"/>',
+    t6:'<circle class="f" cx="13" cy="12" r="4.8"/><circle class="t" cx="13" cy="12" r="2.8"/><path d="M3 3v5a2 2 0 0 0 4 0V3M5 3v18"/><path d="M21 3c-2 1.5-2.5 5-2.5 9H21v9"/>',
+    t7:'<path class="f" d="M3 3h11v7H8l-3 3v-3H3z"/><path class="f" d="M10 12h11v7h-2v3l-3.5-3H10z"/><path class="t" d="M5.5 6h6M5.5 8h4M12.5 15h6M12.5 17h4"/>',
+    t8:'<circle class="f" cx="12" cy="4.4" r="2.6"/><path d="M9.8 7.2L12 10.6l2.2-3.4"/><path d="M2.5 22v-4.5c0-2.8 1.8-4.5 4.8-5.3l2.5-1M21.5 22v-4.5c0-2.8-1.8-4.5-4.8-5.3l-2.5-1"/><path d="M9.8 11.2L8.8 15.8 10 22M14.2 11.2l1 4.6L14 22"/><path class="f" d="M11 12h2l.7 1.4h-3.4z"/><path class="f" d="M11.2 13.4l-.5 6.1L12 21l1.3-1.5-.5-6.1z"/><ellipse class="f" cx="9.4" cy="12.8" rx="1.3" ry=".9" transform="rotate(-30 9.4 12.8)"/><ellipse class="f" cx="14.6" cy="12.8" rx="1.3" ry=".9" transform="rotate(30 14.6 12.8)"/><path d="M4.8 13.8l1.4 3.7 2.5-4M19.2 13.8l-1.4 3.7-2.5-4"/>',
+    u81:'<path class="f" d="M5 11h14v7a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3z"/><path d="M3 11h18M3 8h2M19 8h2M9 7c0-2 2-2 2-4M14 7c0-2 2-2 2-4"/><path class="t" d="M8 15h8"/>',
+    u82:'<path class="f" d="M9 17h6c0-2 3-3 3-7a6 6 0 0 0-12 0c0 4 3 5 3 7z"/><path d="M9.5 20h5M10.5 22h3"/><path class="t" d="M10 13l2-3 2 3M12 10V8M12 1v1.5M3.5 5l1 1M20.5 5l-1 1M1.5 10H3M21 10h1.5"/>',
+    u83:'<path d="M5 3h14M5 21h14"/><path class="f" d="M7 3v3c0 3 5 4 5 6s-5 3-5 6v3M17 3v3c0 3-5 4-5 6s5 3 5 6v3"/><path class="t" d="M9 6h6M10.5 19h3M12 12v4"/>',
+    u84:'<path class="f" d="M3 12h18a9 8 0 0 1-18 0z"/><path d="M7 12c0-3 2-5 5-5s5 2 5 5M10 12c0-2 1-3 2-4"/><path class="t" d="M9 20h6"/>',
+    u85:'<path class="f" d="M3 8l7 4-7 4zM21 8l-7 4 7 4z"/><rect class="f" x="10" y="10" width="4" height="4" rx="1"/><path class="t" d="M5 10.5l3 1.5M19 10.5l-3 1.5"/>',
+    u86:'<path class="f" d="M7 14h10l-1.5 7h-7z"/><path d="M6 14h12M12 14V8M12 11C8 11 6 9 6 6c4 0 6 2 6 5M12 9c0-3 2-5 6-5 0 3-2 5-6 5"/><path class="t" d="M20 11v1M18 13v1M21 14v1"/>',
+    u87:'<rect class="f" x="3" y="4" width="18" height="12" rx="1"/><path d="M12 16v4M8 21l4-5 4 5"/><path class="t" d="M6 13l3-3 2 2 4-4M16 8h2v2"/>',
+    u88:'<rect class="f" x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v4M8 21h8"/><path class="t" d="M9 6h6M9 9h6M2 8v4M22 8v4"/>',
+    u89:'<rect class="f" x="5" y="3" width="14" height="11" rx="1"/><path d="M12 14v7M8 21l4-7 4 7M3 3h18"/><path class="t" d="M8 11c2-4 3 0 5-3s2 2 3 1"/>',
+    u90:'<path class="f" d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="4"/><circle class="t" cx="12" cy="13" r="2"/><path class="t" d="M17.5 9h1"/>',
+    u91:'<circle class="f" cx="9" cy="12" r="6.5"/><path d="M14 12.5l7.5 1.5-7.5 1.5"/><circle cx="7" cy="10.5" r=".8"/><path class="t" d="M6 16c1 .8 2.5.8 3.5 0"/>',
+    u92:'<path d="M12 3v17M7 20h10M4 6h16"/><path class="f" d="M4 6l-2.5 6a2.5 2.5 0 0 0 5 0zM20 6l-2.5 6a2.5 2.5 0 0 0 5 0z"/><circle class="t" cx="12" cy="3" r="1"/>',
+    u93:'<path class="f" d="M2 20l7-12 4 6 3-4 6 10z"/><path d="M9 8V2M9 2h6l-2 2 2 2H9"/><path class="t" d="M5 20l3-4M14 20l3-4"/>',
+    u94:'<path class="f" d="M4 10v4l3 1 10 4V5L7 9z"/><path d="M4 10l3-1M7 15v4h3"/><path class="t" d="M19.5 9a4 4 0 0 1 0 6M21 7a7 7 0 0 1 0 10"/>',
+    u95:'<circle class="f" cx="12" cy="12" r="9"/><path d="M7 13h10a5 5 0 0 1-10 0z"/><path d="M7.5 9l2 1-2 1M16.5 9l-2 1 2 1"/><path class="t" d="M9 16.5h6"/>',
+    u96:'<rect class="f" x="3" y="7" width="12" height="10" rx="2"/><path d="M15 11l6-3v8l-6-3z"/><circle class="t" cx="6" cy="4.5" r="2"/><circle class="t" cx="11" cy="4.5" r="2"/><path class="t" d="M6 7h5"/>',
+    u97:'<path class="f" d="M8 21v-4a7 7 0 1 1 9-6.5V14l2 1.5-2 .5v2.5a1 1 0 0 1-1 1h-3v2z"/><path class="t" d="M11 8c2-1 4 0 4 2s-2 2-2 4M9.5 11c-1 1 0 3 1.5 3"/>',
+    u98:'<path class="f" d="M12 4a8 8 0 1 0 8 8c0-4-3-6-6-6s-5 2-5 5 2 4 3 4 2-1 2-2"/><path class="t" d="M5 7l2 1.5M3.5 12H6M5 17l2-1.5M9 20l.7-2"/>',
+    u99:'<path class="f" d="M3 9l9-5 9 5z"/><path d="M5 11v7M9.5 11v7M14.5 11v7M19 11v7M3 21h18M4 18h16"/><circle class="t" cx="12" cy="7.2" r=".8"/>',
+    u100:'<path class="f" d="M5 10h11a2 2 0 0 1 2 2v3a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5v-2a3 3 0 0 1 1-3z"/><path d="M18 12h2a1.5 1.5 0 0 1 0 3h-2M7 10V8h7v2"/><path class="t" d="M9 3c-1 1 1 2 0 3M12 3c-1 1 1 2 0 3"/>',
+    u101:'<path d="M6 3v5a5 5 0 0 0 10 0V3M5 3h2M15 3h2"/><path d="M11 13v3a4 4 0 0 0 8 0v-1.5"/><circle class="f" cx="19" cy="13" r="2"/>',
+    u102:'<rect class="f" x="3" y="3" width="18" height="18" rx="2"/><path d="M12 5.5v1.5M6 9h12M6 9v2M18 9v2M7 14h10M12 14v6a1.5 1.5 0 0 1-1.5 1.5"/>',
+    u103:'<path d="M2 19l5-13 5 13M4 14h6"/><circle class="f" cx="17" cy="15" r="3"/><path d="M20 12v7"/><path class="t" d="M2 21.5h20"/>',
+    u104:'<circle class="f" cx="17" cy="6" r="2.5"/><path class="f" d="M2 20l7-13h4l7 13z"/><path d="M7.5 11l1.5 1.5 1.5-1 1.5 1 1.5-1.5"/><path class="t" d="M1 20h22M4 17h3M17 17h3"/>',
+    u105:'<path class="f" d="M16 3l5 5-9 9-4 1 1-4z"/><path d="M14 5l5 5M8 14l2 2"/><path class="t" d="M3 21c3 0 3-2 6-2s3 2 6 2h6"/>',
+    u106:'<path class="f" d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.4"/><path class="t" d="M11 17l4-4M11.5 13.5h.01M14.5 16.5h.01"/>',
+    u107:'<path class="f" d="M12 21s-9-5.5-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-9 12-9 12z"/><path class="t" d="M12 9v7M9 12h6"/>',
+    u34:'<path class="f" d="M4 11h16v9H4z"/><path d="M8 15h8"/><path class="f" d="M8 3h8v8H8z"/><path class="t" d="M10 7l1.2 1.2L14 5.5"/>',
+    u35:'<path class="f" d="M7 4h11a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8"/><path d="M7 4a3 3 0 0 0-3 3v1h4M8 19a3 3 0 0 1-3-3V8"/><path class="t" d="M11 9h6M11 12h6M11 15h3"/><circle class="t" cx="17" cy="16" r="1"/>',
+    u36:'<circle class="f" cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/><path class="t" d="M5 7.5c4 1.5 10 1.5 14 0M5 16.5c4-1.5 10-1.5 14 0"/>',
+    u37:'<rect class="f" x="5" y="2.5" width="14" height="19" rx="2"/><circle cx="12" cy="9" r="3"/><path class="t" d="M9 9h6M12 6c-1.5 1.8-1.5 4.2 0 6M8 16h8M9 18.5h6"/>',
+    u38:'<ellipse class="f" cx="10" cy="17" rx="6" ry="2.5"/><path d="M4 17v2.5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5V17M4 13.5V17M16 13.5V17"/><ellipse class="f" cx="10" cy="13.5" rx="6" ry="2.5"/><path class="t" d="M18 9V4M18 4l-2 2M18 4l2 2"/>',
+    u39:'<circle cx="12" cy="12" r="9"/><circle class="f" cx="12" cy="12" r="2.5"/><path d="M12 3v6.5M12 14.5V21M3 12h6.5M14.5 12H21M5.6 5.6l4.6 4.6M13.8 13.8l4.6 4.6M18.4 5.6l-4.6 4.6M10.2 13.8l-4.6 4.6"/><circle class="t" cx="12" cy="12" r="6"/>',
+    u40:'<path d="M10 13L18 3"/><path class="f" d="M5 14c2-2.5 7-2.5 9 0l2 6H3z"/><path class="t" d="M7 20l.5-4.5M10 20v-5M13 20l-.5-4.5"/><path class="t" d="M20 12l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
+    u41:'<path class="f" d="M19 14a8 8 0 1 1-9-10 6.5 6.5 0 0 0 9 10z"/><path class="t" d="M14 4h3l-3 3h3M19 9h2.5l-2.5 2.5h2.5"/>',
+    u42:'<rect class="f" x="7" y="7" width="10" height="10" rx="3"/><path d="M9 7l.7-4h4.6l.7 4M9 17l.7 4h4.6l.7-4M17 11h1.5v2H17"/><path class="t" d="M12 9.5V12l1.8 1.2"/>',
+    u43:'<path class="f" d="M5 5h14l-1.5 14a2 2 0 0 1-2 1.8H8.5a2 2 0 0 1-2-1.8z"/><path class="t" d="M6 10h12"/><rect class="t" x="8.5" y="12" width="3.5" height="3.5" rx=".6" transform="rotate(-10 10 14)"/><rect class="t" x="12.5" y="14" width="3" height="3" rx=".6"/>',
+    u44:'<path class="f" d="M21 3L2.5 10.5l7 2.5 2.5 7.5z"/><path d="M9.5 13L21 3M12 20.5L14 14"/><path class="t" d="M3 20c3-1 5-3 6-5"/>',
+    u45:'<path class="f" d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><path class="t" d="M10 7v3a1 1 0 0 0 2 0V7M11 10v4M14.5 7c-1 1-1 3 0 4v3"/>',
+    u46:'<rect class="f" x="5" y="2.5" width="14" height="19" rx="2"/><rect x="8" y="5.5" width="8" height="3.5" rx=".5"/><path class="t" d="M8.5 13h2M9.5 12v2M13.5 13h2M8.5 17h2M13.5 16.5l2 2M15.5 16.5l-2 2"/>',
+    u47:'<rect class="f" x="8" y="2.5" width="4.5" height="10" rx="1" transform="rotate(20 10 8)"/><path d="M6 21h12M12 21a7 7 0 0 0 6-7 7 7 0 0 0-4-6.5"/><path class="t" d="M6 17h7M9.5 13.5v3.5"/>',
+    u48:'<path d="M3 6h11M3 11h11M3 16h6"/><circle class="f" cx="16.5" cy="17" r="2.5"/><path d="M19 17V7l3 1"/><path class="t" d="M3 21h8"/>',
+    u49:'<rect class="f" x="3" y="5" width="13" height="14" rx="1"/><path d="M16 7a7 7 0 0 1 0 10"/><circle class="t" cx="9.5" cy="12" r="3"/><circle cx="9.5" cy="12" r=".7"/>',
+    u50:'<rect class="f" x="6" y="10" width="12" height="11" rx="2"/><path d="M10 10V7h4v3M9 4h6M15 4l3-1M18 3l1 1.5"/><path class="t" d="M9 15h6M9 18h4M21 5.5v.01M21.5 8v.01"/>',
+    u51:'<circle class="f" cx="9" cy="12" r="6"/><circle class="f" cx="15" cy="12" r="6"/><path class="t" d="M12 9.5v5M10.5 12h3"/>',
+    u52:'<path class="f" d="M2 16v-3l3-5h9l5 5h3v3z"/><circle class="f" cx="7" cy="17" r="2"/><circle class="f" cx="17" cy="17" r="2"/><path class="t" d="M6 13l2-3.5h3V13zM13 9.5V13h4z"/>',
+    u53:'<path class="f" d="M5 4l3.5 2h7L19 4v9a7 7 0 0 1-14 0z"/><circle cx="9.5" cy="10" r="2"/><circle cx="14.5" cy="10" r="2"/><path d="M12 12l-1 2h2z"/><path class="t" d="M8 17c1.5 1 6.5 1 8 0M9 19.5v1.5M15 19.5v1.5"/>',
+    u54:'<rect class="f" x="2" y="8" width="13" height="6" rx="3" transform="rotate(-35 8.5 11)"/><path d="M6.5 9.5l4 3"/><circle class="f" cx="17" cy="16" r="4.5"/><path class="t" d="M15 14l4 4"/>',
+    u55:'<path class="f" d="M5 12h14l-2 9H7z"/><path d="M5 12a4 4 0 0 1 3-4 4 4 0 0 1 8 0 4 4 0 0 1 3 4"/><circle class="t" cx="12" cy="4.5" r="1.5"/><path class="t" d="M9 15l1 5M12 15v5M15 15l-1 5"/>',
+    u56:'<path class="f" d="M12 3a9 9 0 1 0 0 18c1.8 0 2.5-1.2 1.8-2.4-.7-1.2 0-2.6 1.5-2.6H18a3 3 0 0 0 3-3C21 7 17 3 12 3z"/><circle class="t" cx="7.5" cy="11" r="1.2"/><circle class="t" cx="10" cy="7" r="1.2"/><circle class="t" cx="15" cy="7" r="1.2"/><circle class="t" cx="17.5" cy="11" r="1.2"/>',
+    u57:'<path class="f" d="M3 11l9-8 9 8v10H3z"/><path d="M9 21v-6h6v6"/><circle class="t" cx="13.5" cy="18" r=".6"/><path class="t" d="M17 6V4h2v4"/>',
+    u58:'<path class="f" d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 4.5A3 3 0 0 0 9 20a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 4.5A3 3 0 0 1 15 20a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path class="t" d="M6.5 9.5H8M6 14h2M16 9.5h1.5M16 14h2"/>',
+    u59:'<rect class="f" x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle class="t" cx="12" cy="15.5" r="1.2"/><path class="t" d="M12 16.5v2"/>',
+    u60:'<path d="M5 11V9a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><path class="f" d="M3 13a2 2 0 0 1 4 0v2h10v-2a2 2 0 0 1 4 0v5H3z"/><path class="t" d="M6 18v2M18 18v2M12 11v4"/>',
+    u61:'<path class="f" d="M3 20l6-10h6l6 10z"/><path d="M9 10l1.5 2 1.5-1 1.5 1 1.5-2"/><path class="t" d="M12 7c-1-1 1-2 0-3M15 6c-1-1 1-2 0-3M10 15l-1.5 5M14 15l1.5 5"/>',
+    u62:'<path class="f" d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3"/><path class="t" d="M7.5 15h9"/><circle class="t" cx="11" cy="18" r=".8"/><circle class="t" cx="14" cy="17" r=".6"/>',
+    u63:'<path d="M8 2c0 5 8 5 8 10s-8 5-8 10M16 2c0 5-8 5-8 10s8 5 8 10"/><path class="t" d="M9 6h6M8.5 9h7M8.5 15h7M9 18h6"/>',
+    u64:'<ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/><circle class="f" cx="12" cy="12" r="2"/><circle class="t" cx="21" cy="12" r=".8"/>',
+    u65:'<path class="f" d="M12 3a5 5 0 0 0-5 4 4 4 0 0 0-2 7c1 1.5 3 2 5 2h4c2 0 4-.5 5-2a4 4 0 0 0-2-7 5 5 0 0 0-5-4z"/><path d="M12 16v5M9 21h6"/><path class="t" d="M12 12l-2-2M12 14l2-2"/>',
+    u66:'<path class="f" d="M6 4h12l4 6-10 11L2 10z"/><path class="t" d="M2 10h20M9 4l3 6 3-6M12 10v11M12 10l-4 7M12 10l4 7"/>',
+    u67:'<path class="f" d="M4 20v-5h3v5zM9 20v-9h3v9zM14 20V8h3v12z"/><path d="M3 20h18M4 9l5-4 3 2 6-4M15 3h3v3"/>',
+    u68:'<path class="f" d="M12 6c-2-1.5-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.5 12 6z"/><path d="M12 6v14.5"/><path class="t" d="M17 8.5v4M15 10h4M6 9h4M6 12h4"/>',
+    u69:'<path class="f" d="M12 3a8 8 0 0 0-8 8c0 3 1.5 4.5 3 5.5V20h10v-3.5c1.5-1 3-2.5 3-5.5a8 8 0 0 0-8-8z"/><circle class="t" cx="9" cy="11" r="1.8"/><circle class="t" cx="15" cy="11" r="1.8"/><path class="t" d="M12 13.5l-1 2h2zM10 17v3M14 17v3"/>',
+    u70:'<path class="f" d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/><path class="t" d="M9 15c1 1.5 5 1.5 6 0M9.5 12v.01M14.5 12v.01"/><path class="t" d="M20 3l.6 1.4 1.4.6-1.4.6L20 7l-.6-1.4L18 5l1.4-.6z"/>',
+    u71:'<path d="M3 3h6a4 4 0 0 1 4 4"/><path class="f" d="M5 11a8 5 0 0 1 16 0z"/><path class="t" d="M7 14.5v2M11 14v3M15 14v3M19 14.5v2M9 20v1.5M13 20v2M17 20v1.5"/>',
+    u72:'<path class="f" d="M12 8c-3-2.5-7-.5-7 4.5 0 5 3 8.5 5 8.5 1 0 1.5-.5 2-.5s1 .5 2 .5c2 0 5-3.5 5-8.5 0-5-4-7-7-4.5z"/><path d="M12 8c0-2.5 1-4 3.5-5"/><path class="t" d="M8 13c0-1.5.8-2.5 2-3"/>',
+    u73:'<path class="f" d="M3 9h2v6H3zM5 7h2.5v10H5zM16.5 7H19v10h-2.5zM19 9h2v6h-2z"/><path d="M7.5 12h9"/><path class="t" d="M12 9.5v5"/>',
+    u74:'<path class="f" d="M3 9h18v11H3z"/><path d="M3 9l1.5-4.5 4 .8L7 9.5M10 5.5l4 .8-1.5 3.2M16 7l3.5.8L18 9"/><path class="t" d="M10.5 12.5v5l4.5-2.5z"/>',
+    u75:'<circle class="f" cx="12" cy="6" r="2.5"/><path d="M12 8.5v4M7.5 12.5l4.5 1 4.5-1M4 19c2.5-3.5 13.5-3.5 16 0M7 16c1.5 1.5 8.5 1.5 10 0"/><circle class="t" cx="12" cy="6" r="4.5"/><path class="t" d="M12 2V1M3 6h1M20 6h1"/>',
+    u76:'<circle cx="5.5" cy="6.5" r="2"/><circle cx="18.5" cy="6.5" r="2"/><circle class="f" cx="12" cy="12" r="1.6"/><path d="M2 19v-4a3.5 3.5 0 0 1 7 0v4zM15 19v-4a3.5 3.5 0 0 1 7 0v4zM10 20v-2.5a2 2 0 0 1 4 0V20z"/><path class="t" d="M2 21.5h20"/>',
+    u77:'<rect class="f" x="4" y="4" width="16" height="11" rx="1.5"/><path d="M2 19h20l-1.5-4h-17z"/><path class="t" d="M10 7.5L8 9.5l2 2M14 7.5l2 2-2 2M12.5 7l-1 5"/>',
+    u78:'<path class="f" d="M12 3l7 4v8l-7 4-7-4V7z"/><circle cx="12" cy="3" r="1.3"/><circle cx="19" cy="7" r="1.3"/><circle cx="5" cy="7" r="1.3"/><path class="t" d="M12 10l4 2.5M12 10l-4 2.5M12 10v5"/>',
+    u79:'<circle cx="12" cy="12" r="9"/><path class="f" d="M13 5L8 13h4l-1 6 5-8h-4z"/><path class="t" d="M5.5 5.5l13 13"/>',
+    u80:'<path class="f" d="M7 3h10v6a5 5 0 0 1-10 0z"/><path d="M7 5H4v2a3 3 0 0 0 3 3M17 5h3v2a3 3 0 0 1-3 3M12 14v4M8 21h8M9 18h6"/><path class="t" d="M12 5.5l.9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3z"/>',
+    u0:'<path class="f" d="M9 21c-2-1-4-4-5-6l-1-3c0-1 1-2 2-1.5l2 2V6a1.5 1.5 0 0 1 3 0v5V4a1.5 1.5 0 0 1 3 0v7V5a1.5 1.5 0 0 1 3 0v7V7a1.5 1.5 0 0 1 3 0v8c0 4-3 6-6 6z"/><path class="t" d="M20 3.5l1 1.5M2 6l1.5 1"/>',
+    u1:'<rect class="f" x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/><path class="t" d="M8 14c1.5-.8 3-.8 4 0v5c-1-.8-2.5-.8-4 0zM12 14c1-.8 2.5-.8 4 0v5c-1.5-.8-3-.8-4 0z"/>',
+    u2:'<path class="f" d="M4 20V6a2 2 0 0 1 2-2h12v13H6a2 2 0 0 0-2 2z"/><path d="M4 20a2 2 0 0 0 2 2h12v-5"/><path class="t" d="M9 8h6M9 11h4"/>',
+    u3:'<path d="M5 4h14v2H5zM6 6h12"/><path class="f" d="M8 6v13h8V6"/><path class="t" d="M10 6v13M12 6v13M14 6v13"/><path d="M5 19h14v2H5z"/>',
+    u4:'<path class="f" d="M12 2c2 2.5 2.5 4.5 0 6.5-2.5-2-2-4 0-6.5z"/><path class="f" d="M8.5 11h7v10h-7z"/><path d="M12 8.5V11"/><path class="t" d="M10.5 14.5h3M10.5 17.5h3"/>',
+    u5:'<rect class="f" x="4" y="8" width="16" height="12" rx="3"/><path d="M12 4v4M9 3.5h6M2 13v3M22 13v3"/><circle cx="9" cy="13" r="1.5"/><circle cx="15" cy="13" r="1.5"/><path class="t" d="M9 17h6M11 17v1.5M13 17v1.5"/>',
+    u6:'<path class="f" d="M8 3h8l5 5v8l-5 5H8l-5-5V8z"/><path class="t" d="M8 9h8M8 12h3M13 12h3M8 15h8"/>',
+    u7:'<circle cx="12" cy="12" r="9"/><path class="f" d="M12 3a4.5 4.5 0 0 1 0 9 4.5 4.5 0 0 0 0 9 9 9 0 0 1 0-18z"/><circle class="t" cx="12" cy="7.5" r="1"/><circle class="t" cx="12" cy="16.5" r="1"/>',
+    u8:'<rect class="f" x="6" y="3" width="12" height="18" rx="2"/><path class="t" d="M12 7.5a3 3 0 1 0 2.5 5 2.5 2.5 0 0 1-2.5-5zM9 17h6"/>',
+    u9:'<path class="f" d="M9 3h6v6H9z"/><path d="M5 9h14v4H5zM6 13v4h12v-4M4 20h16"/><path class="t" d="M11 5.5h2"/>',
+    u10:'<circle class="f" cx="12" cy="12" r="9"/><circle class="t" cx="12" cy="12" r="6"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><path class="t" d="M12 9l1.5 3-1.5 3-1.5-3z"/>',
+    u11:'<path class="f" d="M12 3c-4 0-6 3-6 7 0 5 2 9 6 11 4-2 6-6 6-11 0-4-2-7-6-7z"/><path class="t" d="M8.5 8.5H11M13 8.5h2.5M9 11.5v.01M15 11.5v.01M12 12v3M10 17.5c1 .8 3 .8 4 0"/>',
+    u12:'<circle class="f" cx="12" cy="9" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/><ellipse class="t" cx="12" cy="3" rx="4" ry="1.2"/><path class="t" d="M4 7l2 1M20 7l-2 1M2.5 12H5M19 12h2.5"/>',
+    u13:'<path d="M3 15c3-8 5-8 6-4s3 2 5-2 3-2 4 1 2 2 3 1"/><path class="f" d="M14 21l1-3 5-5 2 2-5 5z"/><path class="t" d="M3 20h9"/>',
+    u14:'<path class="f" d="M3 11l13-5 2 5-13 5z"/><path d="M5 16l-1.5 5M9 15l2 6M14 8l1.5 4"/><path class="t" d="M19 4l.6 1.4 1.4.6-1.4.6L19 8l-.6-1.4L17 6l1.4-.6z"/>',
+    u15:'<path class="f" d="M12 3c5 0 8 4 8 9 0 4-3 8-8 9-5-1-8-5-8-9 0-5 3-9 8-9z"/><path d="M6.5 10.5c2 .5 3.5 2 3.5 3.5-2 0-4-1.5-3.5-3.5zM17.5 10.5c-2 .5-3.5 2-3.5 3.5 2 0 4-1.5 3.5-3.5z"/><path class="t" d="M10 18h4"/>',
+    u16:'<path class="f" d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 11h2a2 2 0 0 1 0 4h-2M7 4c-1 1 1 2 0 3M11 4c-1 1 1 2 0 3M3 21h15"/><path class="t" d="M10.5 14.5c-1.5-1-1.5-2 0-2.2 1 .3 1 1.3 0 2.2z"/>',
+    u17:'<path class="f" d="M3 8l4.5 4L12 4l4.5 8L21 8l-2 11H5z"/><path class="t" d="M6 16h12"/><circle class="t" cx="12" cy="4" r=".8"/><circle class="t" cx="3" cy="8" r=".8"/><circle class="t" cx="21" cy="8" r=".8"/>',
+    u18:'<path class="f" d="M4 17a8 8 0 0 1 16 0z"/><path d="M12 9V6M10 6h4M2 20h20"/><path class="t" d="M8 14a4 4 0 0 1 2-3"/>',
+    u19:'<path class="f" d="M5 13C5 10.5 7 8.5 9.5 8c2-.5 4.5-1 7.5-.5 2 .3 4-.2 5-1 .5 1.5.5 3-.5 3.7L12.5 12C10 12.3 8 13.5 5 13z"/><path class="f" d="M8 14.5c2 .5 6 1 12-.5-1 2.5-5 4-9 3.5-2-.3-3-1.5-3-3z"/><path d="M9.5 8C8.5 5 6.5 3.5 3.5 3.5 5.5 5 6 6.5 7 9M12.5 7.3c0-2.2-1-3.7-2.8-4.7"/><path d="M11 9.5q1.5-1.5 3.5 0-1.5 1.2-3.5 0z"/><path class="t" d="M17 10.7l.5 2 .8-2M14 11.3l.4 1.7.7-1.8M17.5 14.7l.6-1.7.7 1.6M21.5 8.3h.01"/><path d="M22 11c1 1 1.2 2.5.5 4"/><path d="M5 13C3 12.5 2 11 1.5 9M5.5 15C3.5 15.5 2 17 1.5 19M7 11C5 10 4 8.5 3.5 6.5"/><path class="t" d="M8 16.5C6.5 18 6 20 6.5 22"/>',
+    u20:'<path class="f" d="M3 9l9-6 9 6z"/><path d="M5 9v9M9 9v9M15 9v9M19 9v9M3 18h18M2 21h20"/><circle class="t" cx="12" cy="6.5" r=".8"/>',
+    u21:'<path class="f" d="M2 20L12 4l10 16z"/><path d="M12 4v16"/><path class="t" d="M9 15c1.5-2 4.5-2 6 0-1.5 2-4.5 2-6 0zM12 15v.01"/>',
+    u22:'<circle class="f" cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle class="t" cx="12" cy="12" r="2"/><path class="t" d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6L7 7M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/>',
+    u23:'<path class="f" d="M4 21v-3h16v3zM6 18v-3h12v3zM8 15v-3h8v3zM10 12V9h4v3z"/><path d="M2 21h20M10 9l2-3 2 3"/>',
+    u24:'<path class="f" d="M2 21L10 5l4 7 3-4 5 13z"/><path class="t" d="M6 16h6M4.5 19h8M14 16h4M13 19h6"/>',
+    u25:'<path d="M9 3h6M12 3v2"/><path class="f" d="M7 5h10a4 6 0 0 1 3 7 4 6 0 0 1-3 7H7a4 6 0 0 1-3-7 4 6 0 0 1 3-7z"/><path class="t" d="M12 5v14M8 6c-2 4-2 8 0 12M16 6c2 4 2 8 0 12"/><path d="M10 19h4M12 19v3"/>',
+    u26:'<path class="f" d="M4 4h16l2 3H2z"/><path d="M6 7v14M18 7v14M5 11h14"/><path class="t" d="M12 11v3"/>',
+    u27:'<path class="f" d="M2 11c4 0 7-3 10-7 3 4 6 7 10 7z"/><path d="M5 11v10M19 11v10M3 21h18M9 21v-6h6v6"/><path class="t" d="M12 15v6"/>',
+    u28:'<path class="f" d="M3 20c0-5 4-9 9-9s9 4 9 9z"/><path d="M12 11V7M8.5 7h7M10 20v-4a2 2 0 0 1 4 0v4"/><path class="t" d="M6 15c3-2 9-2 12 0M12 5c-1-1 1-2 0-3"/>',
+    u29:'<path class="f" d="M12 20c-4 0-8-3-8-8 3 0 5 1 8 4 3-3 5-4 8-4 0 5-4 8-8 8z"/><path d="M12 16c-2.5-2.5-3-7 0-12 3 5 2.5 9.5 0 12z"/><path class="t" d="M3 20h18"/>',
+    u30:'<circle class="f" cx="12" cy="12" r="3"/><path d="M9 12C6 10 3 10 1 11c1 1 3 2 5 2M15 12c3-2 6-2 8-1-1 1-3 2-5 2"/><path class="t" d="M9.5 14.5l-2 5.5M14.5 14.5l2 5.5M12 15v5"/>',
+    u31:'<rect class="f" x="5" y="4" width="14" height="16" rx="1"/><path class="t" d="M9 8l2 2M9 8l-1 2M13 8h2M9 13l2 2M13 13l2 1M9 17h2"/>',
+    u32:'<rect class="f" x="6" y="6" width="12" height="12" rx="1.5"/><rect class="t" x="9.5" y="9.5" width="5" height="5"/><path d="M9 2v4M12 2v4M15 2v4M9 18v4M12 18v4M15 18v4M2 9h4M2 12h4M2 15h4M18 9h4M18 12h4M18 15h4"/>',
+    u33:'<rect class="f" x="3" y="4" width="18" height="16" rx="2"/><path d="M3 8.5h18"/><circle class="t" cx="6" cy="6.3" r=".5"/><path class="t" d="M9 11.5l-2 2.5 2 2.5M15 11.5l2 2.5-2 2.5"/>',
+    u108:'<path class="f" d="M5 3h13a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H5z"/><path d="M8.5 3v18"/><path d="M11 15l2.5-7 2.5 7M11.8 13h3.4"/><path class="t" d="M5 6H3M5 10H3M5 14H3M5 18H3"/>',
+    u109:'<circle class="f" cx="10.5" cy="10.5" r="7"/><path d="M15.5 15.5L21 21"/><path class="t" d="M7.5 11.5a3 3 0 0 1 6 0M9 12.5a1.5 1.5 0 0 1 3 0M10.5 13.5v1.5M6.5 13v1M14 13v1.5"/>',
+    u110:'<rect class="f" x="3" y="4" width="14" height="10" rx="1.5"/><path d="M8 18h4M10 14v4"/><rect class="f" x="18" y="7" width="3.5" height="12" rx=".8"/><circle class="t" cx="19.8" cy="10" r=".6"/><path class="t" d="M6 7.5l2 2-2 2M10 11.5h3M19 16h1.6"/>',
+    u111:'<path class="f" d="M4 9c0-3 3-5 8-5s8 2 8 5c0 1-2 1.5-8 1.5S4 10 4 9z"/><path d="M12 4V2.5"/><path class="f" d="M7 10.5c0 5 2 8.5 5 8.5s5-3.5 5-8.5"/><path class="t" d="M9.5 13.5h.01M14.5 13.5h.01M9.5 16.2c1-.8 1.8-.8 2.5 0 .7-.8 1.5-.8 2.5 0"/><path d="M12 22l7.5-7.5M18.5 13.500l2 2"/><path class="f" d="M20.5 15.500c2-.2 2.8-2.2 1.8-3.500-1.3.1-2.3 1.4-1.8 3.500z"/>'
+  };
+  function neon(m){ return '<g class="gl">' + m + '</g><g class="co">' + m + '</g>'; }
+  function renderAssets(){
+    var ul = $('list-assets'), ula = $('list-assets-a'); ul.textContent = ''; ula.textContent = '';
+    COURSES.forEach(function(c, i){
+      var li = el('li' ); li.style.setProperty('--c', colorOf(c)); li.setAttribute('data-k', (CATOF[c.id] || [''])[0]); if (has(c.id)) li.className = 'own';
+      var ic = el('button', 'ic'); ic.type = 'button'; ic.setAttribute('aria-label', c.title + ' 자세히 보기');
+      ic.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + neon(ICO[c.id]) + '</svg>';
+      ic.addEventListener('click', function(){ openDetail(c, i, ic); }); li.appendChild(ic);
+      var m = c.title.match(/^(.*?)\s*\[(.*)\]\s*$/);
+      li.appendChild(el('h3', 0, m ? m[1] : c.title));
+      if (m) li.appendChild(el('span', 'ko', m[2]));
+      (AS[c.id] ? ula : ul).appendChild(li);
+    });
+    if (typeof applyDim === 'function') applyDim();
+  }
+  // Assets 탭의 항목은 받으면 Inventory로, Insights의 항목은 받으면 Insights 안에서 바로 열람한다.
+  var cur = null, pick = null, AS = {t1:1, t2:1, t5:1, t6:1, u1:1}, readerFrom = 'inventory';
+  function setBuy(c){ var b = $('as-buy'), own = has(c.id); b.textContent = own ? (AS[c.id] ? '구매 완료' : '열람') : '구매하기'; b.disabled = own && !!AS[c.id]; }
+  function applyDim(){
+    document.querySelectorAll('#list-assets li, #list-assets-a li').forEach(function(li){ li.classList.toggle('dim', !!pick && li.getAttribute('data-k') !== pick); });
+    document.querySelectorAll('#ia-leg .chip').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-k') === pick)); });
+  }
+  (function(){
+    var box = $('ia-leg');
+    CATS.forEach(function(c){
+      var b = el('button', 'chip'); b.type = 'button'; b.setAttribute('data-k', c[0]); b.style.setProperty('--c', c[2]); b.setAttribute('aria-pressed', 'false');
+      b.appendChild(el('i')); b.appendChild(document.createTextNode(c[1]));
+      b.addEventListener('click', function(){ pick = (pick === c[0]) ? null : c[0]; applyDim(); });
+      box.appendChild(b);
+    });
+  })();
+  function openDetail(c, i, tile){
+    cur = c; var d = $('as-detail'), card = d.firstElementChild, m = c.title.match(/^(.*?)\s*\[(.*)\]\s*$/);
+    card.style.setProperty('--c', colorOf(c));
+    $('as-ic').innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + neon(ICO[c.id]) + '</svg>';
+    $('as-t').textContent = m ? m[1] : c.title; $('as-ko').textContent = m ? m[2] : '';
+    $('as-d').textContent = c.desc; $('as-p').textContent = c.price;
+    setBuy(c);
+    d.hidden = false;
+    var r = tile.getBoundingClientRect(), k = card.getBoundingClientRect();
+    var dx = r.left + r.width / 2 - (k.left + k.width / 2), dy = r.top + r.height / 2 - (k.top + k.height / 2), sc = Math.max(0.15, r.width / k.width);
+    if (card.animate){
+      card.animate([{transform:'translate(' + dx + 'px,' + dy + 'px) scale(' + sc + ')', opacity:0.2}, {transform:'none', opacity:1}], {duration:340, easing:'cubic-bezier(.2,.8,.2,1)'});
+      d.animate([{opacity:0}, {opacity:1}], {duration:240});
+    }
+    $('as-x').focus();
+  }
+  function closeDetail(){
+    var d = $('as-detail'); if (d.hidden) return;
+    if (d.animate){ var a = d.animate([{opacity:1}, {opacity:0}], {duration:180}); a.onfinish = function(){ d.hidden = true; }; } else d.hidden = true;
+  }
+  $('as-x').addEventListener('click', closeDetail);
+  $('as-detail').addEventListener('click', function(e){ if (e.target === this) closeDetail(); });
+  $('as-buy').addEventListener('click', function(){
+    if (!cur) return;
+    if (!has(cur.id)){ buy(cur); setBuy(cur); return; }
+    if (!AS[cur.id]){ var c = cur; closeDetail(); openReader(c, 'insights'); }
+  });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDetail(); });
+  function renderInv(){
+    var ul = $('list-inv'); ul.textContent = '';
+    var list = inv.filter(function(x){ return AS[x.id]; });
+    $('inv-empty').style.display = list.length ? 'none' : 'block';
+    var order = COURSES.map(function(k){ return k.id; });
+    list.slice().sort(function(a, b){ return order.indexOf(a.id) - order.indexOf(b.id); }).forEach(function(x){
+      var c = COURSES.filter(function(k){ return k.id === x.id; })[0]; if (!c) return;
+      var li = el('li'); li.appendChild(el('h3', 0, c.title)); li.appendChild(el('p', 0, c.desc));
+      var row = el('div', 'row'); row.appendChild(el('span', 'date', '구매일 ' + new Date(x.at).toLocaleDateString('ko-KR')));
+      var d = el('button', 'del', '삭제'); d.type = 'button'; var arm = null;
+      d.addEventListener('click', function(){
+        if (!arm){ d.textContent = '정말 삭제?'; d.classList.add('arm'); arm = setTimeout(function(){ arm = null; d.textContent = '삭제'; d.classList.remove('arm'); }, 3000); return; }
+        clearTimeout(arm); removeItem(x.id);
+      });
+      var r = el('button', 'read', '열람'); r.type = 'button'; r.addEventListener('click', function(){ openReader(c); });
+      var g = el('div', 'btns'); g.appendChild(r); g.appendChild(d); row.appendChild(g); li.appendChild(row); ul.appendChild(li);
+    });
+  }
+  var DAYS = ['월', '화', '수', '목', '금', '토', '일'], ttData = {}, ttDay = (new Date().getDay() + 6) % 7, ttEdit = null, ttLo = 6, HH = 56;
+  var PAL = ['#1648b8,#0b2f8f', '#1f7a6e,#0f4a43', '#7a3b8f,#4a2159', '#a8542a,#6b3015', '#3f5fa0,#233864'];
+  try { ttData = JSON.parse(localStorage.getItem('legend.timetable') || '{}'); } catch(e) { ttData = {}; }
+  function ttSave(){ try { localStorage.setItem('legend.timetable', JSON.stringify(ttData)); } catch(e) {} }
+  function mins(t){ var q = t.split(':'); return +q[0] * 60 + +q[1]; }
+  function fmt(m){ return ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2); }
+  function nowMin(){ var d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
+  function todayIdx(){ return (new Date().getDay() + 6) % 7; }
+  function dayList(i){ return (ttData[i] || []).slice().sort(function(a, b){ return a.s < b.s ? -1 : a.s > b.s ? 1 : 0; }); }
+  function palette(t){ var h = 0; for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) % 997; return PAL[h % PAL.length].split(','); }
+  function renderNow(){
+    var box = $('tt-now'), n = fmt(nowMin()), cur = null, nxt = null;
+    dayList(todayIdx()).forEach(function(x){ if (!cur && x.s <= n && n < x.e) cur = x; if (!cur && !nxt && x.s > n) nxt = x; });
+    var pick = cur || nxt; box.textContent = '';
+    box.appendChild(el('span', 'k', cur ? '지금' : nxt ? '다음' : '오늘'));
+    box.appendChild(el('strong', 0, pick ? pick.t : '남은 일정이 없어요'));
+    if (pick) box.appendChild(el('span', 'tm', pick.s + ' ~ ' + pick.e));
+  }
+  function renderDays(){
+    var dEl = $('tt-days'), now = new Date(); dEl.textContent = '';
+    DAYS.forEach(function(nm, i){
+      var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i - todayIdx());
+      var b = el('button', (i === ttDay ? 'on ' : '') + (i === todayIdx() ? 'today' : '')); b.type = 'button';
+      b.appendChild(el('span', 'dn', nm)); b.appendChild(el('span', 'dd', d.getDate()));
+      if ((ttData[i] || []).length) b.appendChild(el('span', 'dot'));
+      b.addEventListener('click', function(){ ttDay = i; renderTT(true); }); dEl.appendChild(b);
+    });
+  }
+  function renderGrid(){
+    var g = $('tt-grid'), list = dayList(ttDay), lo = 6, hi = 24, nm = nowMin(), isToday = ttDay === todayIdx();
+    list.forEach(function(x){ lo = Math.min(lo, Math.floor(mins(x.s) / 60)); hi = Math.max(hi, Math.ceil(mins(x.e) / 60)); });
+    ttLo = lo; g.textContent = ''; g.style.height = (hi - lo) * HH + 'px';
+    for (var h = lo; h <= hi; h++){ var r = el('div', 'hr'); r.style.top = (h - lo) * HH + 'px'; r.appendChild(el('span', 0, ('0' + (h % 24)).slice(-2))); g.appendChild(r); }
+    var lane = el('div', 'lane'); g.appendChild(lane);
+    var items = list.map(function(x){ return {x:x, s:mins(x.s), e:mins(x.e), c:0, n:1}; });
+    var cols = [], cluster = [], cEnd = 0;
+    function flush(){ var m = 0; cluster.forEach(function(it){ m = Math.max(m, it.c + 1); }); cluster.forEach(function(it){ it.n = m; }); cluster = []; cols = []; }
+    items.forEach(function(it){
+      if (cluster.length && it.s >= cEnd) flush();
+      if (!cluster.length) cEnd = 0;
+      var c = 0; while (cols[c] > it.s) c++;
+      cols[c] = it.e; it.c = c; cluster.push(it); cEnd = Math.max(cEnd, it.e);
+    });
+    flush();
+    items.forEach(function(it){
+      var p = palette(it.x.t), b = el('button', 'blk'), ht = Math.max(30, (it.e - it.s) / 60 * HH - 2); b.type = 'button';
+      b.style.top = (it.s - lo * 60) / 60 * HH + 'px'; b.style.height = ht + 'px';
+      b.style.left = (it.c / it.n * 100) + '%'; b.style.width = 'calc(' + (100 / it.n) + '% - 4px)';
+      b.style.background = 'linear-gradient(170deg,' + p[0] + ',' + p[1] + ')';
+      if (ht < 46) b.classList.add('sm');
+      if (isToday && it.s <= nm && nm < it.e) b.classList.add('now');
+      b.appendChild(el('b', 0, it.x.t)); b.appendChild(el('i', 0, it.x.s + ' ~ ' + it.x.e));
+      b.addEventListener('click', function(){ openSheet(it.x); });
+      lane.appendChild(b);
+    });
+    if (isToday && nm >= lo * 60 && nm <= hi * 60){ var nl = el('div', 'nowline'); nl.style.top = (nm - lo * 60) / 60 * HH + 'px'; g.appendChild(nl); }
+  }
+  function ttScroll(){
+    var v = $('v-reader'), g = $('tt-grid'), list = dayList(ttDay);
+    var base = g.getBoundingClientRect().top - v.getBoundingClientRect().top + v.scrollTop;
+    var m = ttDay === todayIdx() ? nowMin() : (list.length ? mins(list[0].s) : 8 * 60);
+    v.scrollTop = Math.max(0, base + (m - ttLo * 60) / 60 * HH - 150);
+  }
+  function renderTT(scroll){ renderDays(); renderGrid(); renderNow(); if (scroll === true) requestAnimationFrame(ttScroll); }
+  function openSheet(x, sm){
+    ttEdit = x || null;
+    var s = sm != null ? sm : Math.max(6 * 60, Math.ceil(nowMin() / 30) * 30); s = Math.min(s, 23 * 60);
+    $('tt-sh-title').textContent = x ? '일정 수정' : '새 일정';
+    $('tt-t').value = x ? x.t : '';
+    $('tt-s').value = x ? x.s : fmt(s);
+    $('tt-e').value = x ? x.e : fmt(Math.min(s + 60, 24 * 60 - 1));
+    $('tt-del').hidden = !x; $('tt-sheet').hidden = false;
+    setTimeout(function(){ $('tt-t').focus(); }, 60);
+  }
+  function closeSheet(){ $('tt-sheet').hidden = true; ttEdit = null; }
+  $('tt-grid').addEventListener('click', function(e){
+    if (e.target.closest('.blk')) return;
+    var y = e.clientY - this.getBoundingClientRect().top;
+    openSheet(null, Math.floor(y / HH * 2) / 2 * 60 + ttLo * 60);
+  });
+  $('tt-add').addEventListener('click', function(){ openSheet(null); });
+  $('tt-cancel').addEventListener('click', closeSheet);
+  $('tt-sheet').addEventListener('click', function(e){ if (e.target === this) closeSheet(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeSheet(); });
+  $('tt-del').addEventListener('click', function(){
+    if (!ttEdit) return; var x = ttEdit;
+    ttData[ttDay] = (ttData[ttDay] || []).filter(function(y){ return y !== x; }); ttSave(); closeSheet(); renderTT(); toast('삭제했어요');
+  });
+  $('tt-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var st = $('tt-s').value, en = $('tt-e').value, t = $('tt-t').value.trim();
+    if (!st || !en || !t) return;
+    if (en <= st){ toast('종료 시간은 시작보다 늦어야 해요'); return; }
+    if (ttEdit){ ttEdit.s = st; ttEdit.e = en; ttEdit.t = t; }
+    else (ttData[ttDay] = ttData[ttDay] || []).push({s:st, e:en, t:t});
+    ttSave(); closeSheet(); renderTT();
+  });
+  setInterval(function(){ if ($('home').getAttribute('data-view') === 'reader' && !$('tt').hidden) renderTT(); }, 30000);
+  var BLK = 'legend.five', bl = ['', '', ''];
+  try { var sv = JSON.parse(localStorage.getItem(BLK) || '[]'); if (Array.isArray(sv)) for (var q = 0; q < 3; q++) bl[q] = typeof sv[q] === 'string' ? sv[q] : ''; } catch(e) {}
+  function blSave(){ try { localStorage.setItem(BLK, JSON.stringify(bl)); } catch(e) {} }
+  function isSun(){ return todayIdx() === 6; }
+  function setMode(m){
+    $('tt').classList.toggle('bl-mode', m === 'bl');
+    Array.prototype.forEach.call($('tt-tabs').children, function(b){ b.classList.toggle('on', b.getAttribute('data-m') === m); });
+    if (m === 'bl') renderBL(); else renderTT(true);
+  }
+  function renderBL(){
+    var yr = new Date().getFullYear(), hero = $('bl-hero'), box = $('bl-slots');
+    hero.textContent = '';
+    hero.appendChild(el('span', 'k', isSun() ? '일요일 · 5년 뒤를 그리는 날' : '일요일까지 ' + (6 - todayIdx()) + '일'));
+    hero.appendChild(el('strong', 0, (yr + 5) + '년의 나'));
+    if (box.children.length) return;
+    for (var n = 0; n < 3; n++) (function(n){
+      var row = el('div', 'bl-slot'), ta = el('textarea');
+      ta.rows = 2; ta.maxLength = 120; ta.value = bl[n]; ta.placeholder = '5년 후 당신의 모습을 생각하면서 적어주세요.'; ta.setAttribute('aria-label', '5년 후의 나 ' + (n + 1));
+      ta.addEventListener('input', function(){ bl[n] = ta.value; blSave(); });
+      row.appendChild(el('span', 'num', n + 1)); row.appendChild(ta); box.appendChild(row);
+    })(n);
+  }
+  Array.prototype.forEach.call($('tt-tabs').children, function(b){ b.addEventListener('click', function(){ setMode(b.getAttribute('data-m')); }); });
+  $('rd-how').addEventListener('click', function(){ $('how-sheet').hidden = false; });
+  $('how-close').addEventListener('click', function(){ $('how-sheet').hidden = true; });
+  $('how-sheet').addEventListener('click', function(e){ if (e.target === this) this.hidden = true; });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') $('how-sheet').hidden = true; });
+  var STK = 'legend.watch', watch = ['AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN', 'GOOGL'], quotes = {}, stTimer = null, stErr = false, stAt = null;
+  var INDEX = [['SPY', 'S&P 500'], ['QQQ', 'Nasdaq 100'], ['DIA', 'Dow 30']];
+  try { var wl = JSON.parse(localStorage.getItem(STK) || 'null'); if (Array.isArray(wl)) watch = wl.filter(function(s){ return /^[A-Z.-]{1,6}$/.test(s); }).slice(0, 12); } catch(e) {}
+  function stSave(){ try { localStorage.setItem(STK, JSON.stringify(watch)); } catch(e) {} }
+  function etParts(){ var p = {}; new Intl.DateTimeFormat('en-US', {timeZone:'America/New_York', weekday:'short', hour:'2-digit', minute:'2-digit', hour12:false}).formatToParts(new Date()).forEach(function(x){ p[x.type] = x.value; }); return p; }
+  function stPrice(q){ return q && q.c ? '$' + q.c.toFixed(2) : '—'; }
+  function stChg(q){ if (!q || !q.c) return ''; var f = function(v){ return (v > 0 ? '+' : '') + v.toFixed(2); }; return f(q.d) + ' (' + f(q.dp) + '%)'; }
+  function stDir(q){ return q && q.c ? (q.d > 0 ? 'up' : q.d < 0 ? 'dn' : '') : ''; }
+  function renderST(){
+    var p = etParts(), t = (+p.hour % 24) * 60 + +p.minute, open = ['Sat', 'Sun'].indexOf(p.weekday) < 0 && t >= 570 && t < 960;
+    var s = $('st-status'); s.className = 'st-status' + (open ? ' open' : ''); s.textContent = '';
+    s.appendChild(el('b', 0, open ? '미국 장 열림' : '미국 장 닫힘'));
+    s.appendChild(el('span', 0, '뉴욕 ' + ('0' + (+p.hour % 24)).slice(-2) + ':' + p.minute));
+    var ix = $('st-idx'); ix.textContent = '';
+    INDEX.forEach(function(i){ var q = quotes[i[0]], c = el('div', 'st-card'); c.appendChild(el('span', 'n', i[1])); c.appendChild(el('span', 'p', stPrice(q))); c.appendChild(el('span', 'c ' + stDir(q), stChg(q) || ' ')); ix.appendChild(c); });
+    var ls = $('st-list'); ls.textContent = '';
+    watch.forEach(function(sym){
+      var q = quotes[sym], row = el('div', 'st-row'), r = el('div', 'r');
+      row.appendChild(el('span', 's', sym));
+      r.appendChild(el('span', 'p', stPrice(q))); r.appendChild(el('span', 'c ' + stDir(q), q && q.c === 0 ? '없는 티커' : (stChg(q) || ' '))); row.appendChild(r);
+      var x = el('button', 'x', '×'); x.type = 'button'; x.setAttribute('aria-label', sym + ' 삭제');
+      x.addEventListener('click', function(){ watch = watch.filter(function(y){ return y !== sym; }); stSave(); renderST(); });
+      row.appendChild(x); ls.appendChild(row);
+    });
+    $('st-note').textContent = stErr ? '시세 서버에 연결되지 않았어요. 배포 후 서버 연결을 마치면 숫자가 채워져요.' : stAt ? '마지막 갱신 ' + stAt.toLocaleTimeString('ko-KR') + ' · 30초마다 자동 갱신 · 상승 빨강, 하락 파랑 · 지수는 ETF 기준' : '불러오는 중…';
+  }
+  function fetchST(){
+    var syms = INDEX.map(function(i){ return i[0]; }).concat(watch).filter(function(s, i, a){ return a.indexOf(s) === i; });
+    fetch('/.netlify/functions/quotes?symbols=' + syms.join(',')).then(function(r){ if (!r.ok) throw 0; return r.json(); })
+      .then(function(d){ quotes = d; stErr = false; stAt = new Date(); renderST(); })
+      .catch(function(){ stErr = true; renderST(); });
+  }
+  function startST(){ renderST(); fetchST(); clearInterval(stTimer); stTimer = setInterval(function(){ if (!$('st').hidden && $('home').getAttribute('data-view') === 'reader') fetchST(); }, 30000); }
+  function stopST(){ clearInterval(stTimer); }
+  $('st-form').addEventListener('submit', function(e){
+    e.preventDefault(); var v = $('st-t').value.trim().toUpperCase();
+    if (watch.length >= 12){ toast('관심 종목은 12개까지예요'); return; }
+    if (!/^[A-Z.-]{1,6}$/.test(v) || watch.indexOf(v) >= 0){ toast('티커를 확인해 주세요'); return; }
+    watch.push(v); stSave(); $('st-t').value = ''; renderST(); fetchST();
+  });
+  function openReader(c, from){
+    readerFrom = from || 'inventory'; $('rd-back').textContent = '← ' + (readerFrom === 'insights' ? 'Insights' : 'Inventory');
+    var t = CONTENT[c.id], b = $('rd-body');
+    $('rd-title').textContent = c.title;
+    var isTT = c.id === 't1'; $('rd-how').hidden = !isTT; $('how-sheet').hidden = true; $('tt').hidden = !isTT; b.hidden = isTT || c.id === 't2'; var isST = c.id === 't2'; $('st').hidden = !isST; if (isST) startST(); else stopST(); if (isTT) setMode(isSun() ? 'bl' : 'tt');
+    b.textContent = t || '아직 작성된 글이 없어요.'; b.className = t ? '' : 'none';
+    $('home').setAttribute('data-view', 'reader'); $('v-reader').scrollTop = 0;
+  }
+  $('rd-back').addEventListener('click', function(){ $('home').setAttribute('data-view', readerFrom); });
+  function removeItem(id){ inv = inv.filter(function(x){ return x.id !== id; }); save(); renderAssets(); renderInv(); toast('삭제했어요'); }
+  function buy(c){ inv.push({id:c.id, at:Date.now()}); save(); renderAssets(); renderInv(); toast(AS[c.id] ? 'Inventory에 담겼어요' : '받았어요 · 이제 열람할 수 있어요'); }
+  renderAssets(); renderInv();
+})();
+// 개별 코드: 코드 → 이름. 아래 값을 원하는 코드/이름으로 바꾸세요.
+// (브라우저에서만 확인하는 방식이라 보안용이 아닌 데모용입니다.)
+var CODES = { "sua0909": "sua" };
+
+var stage = document.getElementById('track');
+var sea = document.getElementById('sea'), deep = document.getElementById('deep');
+var mer = document.querySelector('.mermaid'), swim = 0, wakeSwim = function(){};
+var lock = document.getElementById('lock'), hint = document.getElementById('hint');
+var pw = document.getElementById('pw'), msg = document.getElementById('msg');
+function clamp(x){ return Math.max(0, Math.min(1, x)); }
+var max = 1;
+function measure(){ max = Math.max(1, stage.offsetHeight - window.innerHeight); }
+function update(){
+  var p = clamp(window.scrollY / max);
+  sea.style.top = (62 - 80 * clamp(p / 0.55)) + 'vh';
+  swim = clamp((p - 0.02) / 0.3);
+  if (swim > 0) wakeSwim();
+  deep.style.opacity = clamp((p - 0.35) / 0.3);
+  hint.style.opacity = 1 - clamp(p / 0.1);
+  var l = clamp((p - 0.68) / 0.27);
+  lock.style.opacity = l;
+  var on = l > 0.6;
+  lock.classList.toggle('on', on);
+  pw.tabIndex = on ? 0 : -1;
+}
+var tick = false;
+window.addEventListener('scroll', function(){
+  if (!tick){ tick = true; requestAnimationFrame(function(){ tick = false; update(); }); }
+}, {passive:true});
+window.addEventListener('resize', function(){ measure(); update(); });
+measure();
+update();
+
+// 인어 헤엄: 몸·꼬리·지느러미·머리카락이 파동처럼 흔들리고, 스크롤할수록(swim) 더 강하고 빠르게 헤엄친다.
+// 스크롤 전(swim=0)이나 비밀번호 화면 이후에는 루프가 멈춰서 배터리를 쓰지 않는다.
+(function(){
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var gm = mer.querySelector('svg > g');
+  var els = {fin: gm.children[0].firstElementChild, body: gm.children[1], arm: gm.children[2], hair: gm.children[3].firstElementChild};
+  function parse(d){ var out = [], re = /([MCLZ])|(-?\d*\.?\d+)/g, m, cur = null; while ((m = re.exec(d))){ if (m[1]){ cur = {c:m[1], n:[]}; out.push(cur); } else cur.n.push(parseFloat(m[2])); } return out; }
+  function build(sg, f){ var s = ''; sg.forEach(function(g){ s += g.c; for (var i = 0; i < g.n.length; i += 2){ var q = f(g.n[i], g.n[i + 1]); s += (i ? ' ' : '') + q[0].toFixed(1) + ' ' + q[1].toFixed(1); } }); return s; }
+  var P = {}, orig = {};
+  for (var k in els){ orig[k] = els[k].getAttribute('d'); P[k] = parse(orig[k]); }
+  var ph = 0, last = 0, running = false, homeEl = document.getElementById('home');
+  function tick(now){
+    if (homeEl.classList.contains('on')){ running = false; return; }
+    if (swim === 0){ for (var k in els) els[k].setAttribute('d', orig[k]); running = false; return; }
+    var dt = Math.min(0.05, (now - last) / 1000); last = now;
+    var A = 12 * swim; ph += dt * (2.4 + 5.5 * swim);
+    var body = function(x, y){ var w = Math.pow(clamp((y - 60) / 175), 1.4); return [x + A * w * Math.sin(y / 26 - ph) + 0.25 * A * (1 - w) * Math.sin(ph + 1.2), y]; };
+    els.body.setAttribute('d', build(P.body, body));
+    els.fin.setAttribute('d', build(P.fin, function(x, y){ var q = body(x, y); return [q[0] + 0.3 * A * Math.sin(ph * 1.4), q[1]]; }));
+    els.arm.setAttribute('d', build(P.arm, function(x, y){ var q = body(x, y); return [q[0], q[1] + (50 - x) / 33 * 5 * swim * Math.sin(ph * 1.2)]; }));
+    els.hair.setAttribute('d', build(P.hair, function(x, y){ var hw = clamp((y - 10) / 115); return [x + 0.55 * A * hw * Math.sin(y / 22 - ph * 0.9 + 1.5), y + 9 * swim * hw]; }));
+    requestAnimationFrame(tick);
+  }
+  wakeSwim = function(){ if (!running){ running = true; last = performance.now(); requestAnimationFrame(tick); } };
+  if (swim > 0) wakeSwim();
+})();
+
+lock.addEventListener('submit', function(e){
+  e.preventDefault();
+  var v = pw.value.trim().toLowerCase();
+  if (CODES[v]){ msg.className = 'ok'; msg.textContent = CODES[v] + '님, 어서 오세요.'; pw.blur();
+    setTimeout(function(){ document.getElementById('home').classList.add('on'); document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; }, 700); }
+  else { msg.className = ''; msg.textContent = '코드가 맞지 않아요. 다시 입력해 주세요.'; pw.select(); }
+});
+</script>
+</body>
+</html>
